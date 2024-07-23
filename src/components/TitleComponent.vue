@@ -138,7 +138,7 @@ span{
 
 .decoration > img{
     position: absolute;
-    transform: translate(-50%, -50%);
+    /* transform: translate(-50%, -50%); */
 
     /* 테스트 코드 *반드시 삭제할 것 */
     border: 2px solid green;
@@ -147,35 +147,41 @@ span{
 .bird{
     width: 15%;
     min-width: 130px;
-    left: 1600px;
-    bottom: 600px;
+    left: 80%;
+    bottom: 80%;
 }
 
 .home{
     width: 12%;
-    min-width: 130px;
-    right: 1400px;
-    bottom: -120px;
+    min-width: 170px;
+    left: 10%;
+    bottom: 6%;
 }
 
 .cloud1{
     width: 15%;
     min-width: 130px;
-    right: 1400px;
-    bottom: 500px;
+    left: 8%;
+    bottom: 65%;
 }
 
 .cloud2{
-    width: 11%;
+    width: 13%;
     min-width: 130px;
-    left: 1600px;
-    bottom: 200px;
+    left: 75%;
+    bottom: 35%;
 }
 
 .carrot{
     width: 10%;
-    min-width: 130px;
-    right: 1200px;
-    bottom: -100px;
+    min-width: 120px;
+    left: 25%;
+    bottom: -2%;
+}
+
+@media (max-width: 1024px) {
+    .decoration{
+        visibility:hidden;
+    }
 }
 </style>
