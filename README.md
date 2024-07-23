@@ -1,34 +1,3 @@
-<<<<<<< HEAD
-# KB_PennyBuddy
-
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-=======
 # 🐰 Penny Buddy
 
 <p align="center">
@@ -104,6 +73,3 @@ npm run build
 ## 라이센스
 
 MIT © [NoHack 템플릿](mailto:lbjp114@gmail.com)
-
-<!-- Stack Icon Refernces -->
->>>>>>> d415121979f3bcbfeb49e6aeb5b0a5885c37a32a
