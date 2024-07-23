@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # Created by https://www.toptal.com/developers/gitignore/api/intellij
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij
 
@@ -182,7 +180,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows
->>>>>>> d415121979f3bcbfeb49e6aeb5b0a5885c37a32a
+
 # Logs
 logs
 *.log
