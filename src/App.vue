@@ -1,23 +1,21 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import TitleComponent from './components/TitleComponent.vue'
+import TitleComponent from './components/Intro/TitleComponent.vue'
 </script>
 
 <template>
   <!-- background -->
   <img alt="ground" class="ground" src="@/assets/ground3.png"/>
 
-  <!-- title -->
-  <TitleComponent></TitleComponent>
   
-    <!-- <div class="wrapper">
+    <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
-    </div> -->
+    </div>
 
-  <!-- <RouterView /> -->
+  <RouterView />
 </template>
 
 <style scoped>
