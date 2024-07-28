@@ -6,11 +6,11 @@
             <h2 class="blurredRectangle">화면을 클릭해서 시작하세요</h2>
         </div>
         <div class="decoration" ref="decorationRef">
-            <img alt="bird" class="bird" src="@/assets/bird.png">
-            <img alt="home" class="home" src="@/assets/home.png">
-            <img alt="cloud" class="cloud1" src="@/assets/cloud1.png">
-            <img alt="cloud" class="cloud2" src="@/assets/cloud2.png">
-            <img alt="carrot" class="carrot" src="@/assets/carrot.png">
+            <img alt="bird" class="bird" src="@/assets/background/bird.png">
+            <img alt="home" class="home" src="@/assets/background/home.png">
+            <img alt="cloud" class="cloud1" src="@/assets/background/cloud1.png">
+            <img alt="cloud" class="cloud2" src="@/assets/background/cloud2.png">
+            <img alt="carrot" class="carrot" src="@/assets/background/carrot.png">
         </div>
         
     </div>

@@ -1,24 +1,58 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import TitleComponent from './components/Intro/TitleComponent.vue'
+import MenuBar from './components/MenuBarComponent.vue'
+
 </script>
+
 
 <template>
   <!-- background -->
-  <img alt="ground" class="ground" src="@/assets/ground3.png"/>
-
+  <img alt="ground" class="ground" src="@/assets/background/ground3.png"/>
   
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-
-  <RouterView />
+  <div class="flex-container">    
+      <div class="wrapper">
+        <nav>
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/about">About</RouterLink>
+        </nav>
+      </div>
+      <MenuBar style="border:10px solid green;"></MenuBar>
+      <div class="router">
+        <RouterView/>
+      </div>
+  </div>
 </template>
 
 <style scoped>
+
+.flex-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 100%;
+  height: 100vh;
+
+  position:absolute;
+  top:0;
+  left:0;
+
+  align-items:flex-start;
+
+  /* border: 5px dotted green; */
+}
+
+.wrapper{
+  width: 100%;
+  /* border:5px solid yellow; */
+}
+
+.router{
+  height: 85%;
+  width:100%;
+  /* border : 5px solid red; */
+}
 
 .ground {
   /* 크기 설정 */
@@ -31,6 +65,7 @@ import TitleComponent from './components/Intro/TitleComponent.vue'
   bottom: 0;
   left:50%;
   transform: translate(-50%, 10%);
+  z-index: -1;
 }
 
 /* header {
