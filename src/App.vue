@@ -1,6 +1,6 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import MenuBar from './components/MenuBarComponent.vue'
+// import { RouterLink, RouterView } from 'vue-router'
+
 
 </script>
 
@@ -10,13 +10,7 @@ import MenuBar from './components/MenuBarComponent.vue'
   <img alt="ground" class="ground" src="@/assets/background/ground3.png"/>
   
   <div class="flex-container">    
-      <div class="wrapper">
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/about">About</RouterLink>
-        </nav>
-      </div>
-      <MenuBar style="border:10px solid green;"></MenuBar>
+      
       <div class="router">
         <RouterView/>
       </div>
@@ -49,9 +43,9 @@ import MenuBar from './components/MenuBarComponent.vue'
 }
 
 .router{
-  height: 85%;
+  height: 100%;
   width:100%;
-  /* border : 5px solid red; */
+  /* border : 5px solid greenyellow */
 }
 
 .ground {
@@ -66,6 +60,14 @@ import MenuBar from './components/MenuBarComponent.vue'
   left:50%;
   transform: translate(-50%, 10%);
   z-index: -1;
+}
+
+@media(max-width: 1050px){
+  .router{
+    height: auto;
+    width:100%;
+    /* border : 5px solid greenyellow */
+  }
 }
 
 /* header {
