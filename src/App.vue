@@ -45,7 +45,7 @@
 .router{
   height: 100%;
   width:100%;
-  border : 5px solid greenyellow
+  /* border : 5px solid greenyellow */
 }
 
 .ground {
@@ -66,7 +66,7 @@
   .router{
     height: auto;
     width:100%;
-    border : 5px solid greenyellow
+    /* border : 5px solid greenyellow */
   }
 }
 

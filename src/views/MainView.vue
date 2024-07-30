@@ -26,7 +26,7 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
         position:sticky;
         top:0;
         float: right;
-        margin-right : 20px;
+        margin-right : 4%;
     }
 
     .main {
@@ -40,7 +40,9 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
         width: 100%;
 
         box-sizing: border-box;
-        border: 5px solid blue;
+
+        padding:0px 2%;
+        /* border: 5px solid blue; */
     }
 
     .flex-container{
@@ -54,7 +56,7 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
         height:100%;
         width: calc(100% - 320px);
 
-        border:5px solid red; 
+        /* border:5px solid red;  */
         box-sizing: border-box;
 
         padding-left: 20px;
@@ -70,18 +72,18 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
 
         background-color : white;
         
-        margin:10px;
+        margin: 20px 10px;
         padding : 20px;
 
         border-radius : 15px;
         box-shadow: 5px 5px 10px rgb(221, 215, 202);
 
-        border:1px solid red;
+        /* border:1px solid red; */
     }
 
     .chat{
         flex: 1 1 25%;
-        border: 5px solid yellow;
+        /* border: 5px solid yellow; */
         height : 100%;
         min-width: 300px;
     }
