@@ -8,7 +8,7 @@
             <div class = "box">컴포넌트4</div>
             <div class = "box">컴포넌트5</div>
             <div class = "box">컴포넌트5</div>
-            <div class = "box">컴포넌트5</div>
+            <router-link class="box" style="height:20%;" to="/expense-list">컴포넌트5</router-link>
         </div>
     </div>
     
