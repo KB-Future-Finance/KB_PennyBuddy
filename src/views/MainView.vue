@@ -1,5 +1,6 @@
 <script setup>
 import MenuBar from '@/components/common/MenuBarComponent.vue'
+import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 </script>
 
 <template>
@@ -7,7 +8,9 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
         <MenuBar></MenuBar>
     </div>
     <div class="main">
-        <div class="chat">chatbot영역</div>
+        <div class="chat">
+            <ChatBot></ChatBot>
+        </div>
         <div class = "flex-container">
             <div class = "box" style="height:20%;">컴포넌트1</div>
             <div class = "box">컴포넌트2</div>
@@ -22,6 +25,7 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
     </template>
     
     <style scoped>
+
     .menu{
         position:sticky;
         top:0;
@@ -84,7 +88,7 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
     .chat{
         flex: 1 1 25%;
         /* border: 5px solid yellow; */
-        height : 100%;
+        height : 90vh;
         min-width: 300px;
     }
 
