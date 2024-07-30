@@ -1,4 +1,11 @@
+<script setup>
+import MenuBar from '@/components/common/MenuBarComponent.vue'
+</script>
+
 <template>
+    <div class="menu">
+        <MenuBar></MenuBar>
+    </div>
     <div class="main">
         <div class="chat">chatbot영역</div>
         <div class = "flex-container">
@@ -15,6 +22,13 @@
     </template>
     
     <style scoped>
+    .menu{
+        position:sticky;
+        top:0;
+        float: right;
+        margin-right : 20px;
+    }
+
     .main {
         display: flex;
         flex-direction: row;
@@ -22,7 +36,7 @@
         align-items: flex-start;
         flex-wrap: wrap;
 
-        height:100%;
+        height:80%;
         width: 100%;
 
         box-sizing: border-box;
@@ -43,7 +57,8 @@
         border:5px solid red; 
         box-sizing: border-box;
 
-        padding: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 
     .box{
@@ -75,6 +90,7 @@
         .main{
             flex-direction:row;
             align-items: center;
+            height:auto;
         }
 
         .flex-container{
