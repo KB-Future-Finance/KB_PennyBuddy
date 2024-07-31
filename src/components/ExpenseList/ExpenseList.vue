@@ -1,156 +1,141 @@
 <template>
-    <div class="container">
-        <h1 class="title">거래 내역</h1>
-        <div class="filter-buttons">
-            <button class="filter-button">기간</button>
-            <button class="filter-button">카테고리 ▼</button>
-            <button class="filter-button">지출 / 수입 ▼</button>
-            <button class="filter-button">전체보기</button>
+  <div class="expense-list">
+    <header>
+      <!-- <img src="@/assets/penny-buddy-logo.png" alt="Penny Buddy Logo"/> -->
+      <div class="rabbit-image"></div>
+    </header>
+    <main>
+      <div class="filter-section">
+        <vue3-datepicker v-model="startDate" placeholder="시작일" />
+        <vue3-datepicker v-model="endDate" placeholder="종료일" />
+        <div class="radio-group">
+          <label><input type="radio" v-model="filterType" value="전체" /> 전체</label>
+          <label><input type="radio" v-model="filterType" value="수입" /> 수입</label>
+          <label><input type="radio" v-model="filterType" value="지출" /> 지출</label>
         </div>
-        <table class="expense-table">
-            <thead>
-                <tr>
-                    <th>날짜</th>
-                    <th>카테고리</th>
-                    <th>지출/수입</th>
-                    <th>거래 내역</th>
-                    <th>금액</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="record in records" :key="record.record_id">
-                    <td>{{ formatDate(record.reg_date) }}</td>
-                    <td>{{ record.category_name }}</td>
-                    <td>{{ record.category_type }}</td>  
-                    <td>{{ record.record_memo }}</td>
-                    <td>{{ record.amount }}</td>
-                    <td>
-                        <button class="edit-button">수정</button>
-                        <button class="delete-button">삭제</button>
-                    </td>
-                </tr>
-            </tbody>
+        <div class="checkbox-group">
+          <label v-for="category in categories" :key="category.id">
+            <input type="checkbox" v-model="selectedCategories" :value="category.id" /> {{ category.name }}
+          </label>
+        </div>
+      </div>
+      <div class="data-section">
+        <table>
+          <thead>
+            <tr>
+              <th>날짜</th>
+              <th>카테고리</th>
+              <th>금액</th>
+              <th>내용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in displayedData" :key="item.id">
+              <td>{{ item.date }}</td>
+              <td>{{ item.category }}</td>
+              <td>{{ item.amount }}</td>
+              <td>{{ item.description }}</td>
+            </tr>
+          </tbody>
         </table>
-        <div class="pagination">
-            <button @click="fetchRecords(currentPage - 1)" :disabled="currentPage === 1">이전</button>
-            <span v-for="page in totalPages" :key="page">
-                <button @click="fetchRecords(page)" :class="{ active: page === currentPage }">{{ page }}</button>
-            </span>
-            <button @click="fetchRecords(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
-        </div>
-    </div>
+      </div>
+      <div class="pagination">
+        <button @click="prevPage" :disabled="currentPage === 1">이전</button>
+        <button v-for="page in totalPages" :key="page" @click="changePage(page)">{{ page }}</button>
+        <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
+      </div>
+    </main>
+    <footer>
+      <div>총 수입: {{ totalIncome }}</div>
+      <div>총 지출: {{ totalExpense }}</div>
+    </footer>
+  </div>
 </template>
 
 <script>
+import { ref, computed } from 'vue';
 import axios from 'axios';
+import Datepicker from 'vue3-datepicker';
 
 export default {
-    name: 'ExpenseList',
-    data() {
-        return {
-            records: [],
-            currentPage: 1,
-            totalPages: 1
-        };
-    },
-    created() {
-        this.fetchRecords();
-    },
-    methods: {
-        fetchRecords(page = 1) {
-            axios.get('/api/record/list', {
-                params: {
-                    page: page,
-                    size: 10
-                },
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8'
-                }
-            })
-            .then(response => {
-                this.records = response.data.records;
-                this.currentPage = response.data.currentPage;
-                this.totalPages = response.data.totalPages;
-            })
-            .catch(error => {
-                console.error('There was an error fetching the records!', error);
-            });
-        },
-        formatDate(date) {
-            let d = new Date(date);
-            let month = '' + (d.getMonth() + 1);
-            let day = '' + d.getDate();
-            let year = d.getFullYear();
+  components: {
+    'vue3-datepicker': Datepicker
+  },
+  data() {
+    return {
+      startDate: null,
+      endDate: null,
+      filterType: '전체',
+      categories: [],
+      selectedCategories: [],
+      data: [],
+      currentPage: 1,
+      itemsPerPage: 10
+    };
+  },
+  computed: {
+    filteredData() {
+      return this.data.filter(item => {
+        const inDateRange = (!this.startDate || new Date(item.date) >= new Date(this.startDate)) &&
+                            (!this.endDate || new Date(item.date) <= new Date(this.endDate));
+        const matchesType = this.filterType === '전체' || item.type === this.filterType;
+        const matchesCategory = this.selectedCategories.length === 0 || this.selectedCategories.includes(item.categoryId);
 
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-
-            return [year, month, day].join('-');
-        }
+        return inDateRange && matchesType && matchesCategory;
+      });
+    },
+    displayedData() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredData.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredData.length / this.itemsPerPage);
+    },
+    totalIncome() {
+      return this.data.filter(item => item.type === '수입').reduce((sum, item) => sum + item.amount, 0);
+    },
+    totalExpense() {
+      return this.data.filter(item => item.type === '지출').reduce((sum, item) => sum + item.amount, 0);
     }
+  },
+  methods: {
+    fetchData() {
+      axios.get('/api/record/list')
+        .then(response => {
+          this.data = response.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage -= 1;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage += 1;
+      }
+    },
+    changePage(page) {
+      this.currentPage = page;
+    }
+  },
+  created() {
+    this.fetchData();
+    axios.get('/api/categories')
+      .then(response => {
+        this.categories = response.data;
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
 };
 </script>
 
-<style scoped>
-.container {
-    padding: 20px;
-}
-
-.title {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.filter-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.filter-button {
-    background-color: #f08d8d;
-    border: none;
-    padding: 10px 20px;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.expense-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.expense-table th, .expense-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-.expense-table th {
-    background-color: #f2f2f2;
-}
-
-.edit-button, .delete-button {
-    background-color: #f08d8d;
-    border: none;
-    padding: 5px 10px;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-right: 5px;
-}
-
-.pagination {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-}
-
-.pagination button.active {
-    background-color: #f08d8d;
-    color: white;
-}
+<style>
+/* Add necessary styles here */
 </style>
