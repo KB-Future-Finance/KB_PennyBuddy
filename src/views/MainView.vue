@@ -27,20 +27,25 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
     <style scoped>
 
     .menu{
-        position:sticky;
-        top:0;
-        float: right;
-        margin-right : 4%;
+        position:fixed;
+        top:20px;
+        right: 20px;
+        
+        z-index: 2;
+
+        /* border: 1px solid red; */
+
+        margin-right: 3%;
     }
 
     .main {
         display: flex;
         flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
+        justify-content: stretch;
+        align-items: center;
         flex-wrap: wrap;
 
-        height:80%;
+        height:100%;
         width: 100%;
 
         box-sizing: border-box;
@@ -57,14 +62,14 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
         flex-wrap: wrap;
 
-        height:100%;
-        width: calc(100% - 320px);
+        height:80%;
 
         /* border:5px solid red;  */
         box-sizing: border-box;
 
         padding-left: 20px;
         padding-right: 20px;
+        padding-bottom: 20px;
     }
 
     .box{
@@ -76,7 +81,7 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
         background-color : white;
         
-        margin: 20px 10px;
+        margin: 10px 10px;
         padding : 20px;
 
         border-radius : 15px;

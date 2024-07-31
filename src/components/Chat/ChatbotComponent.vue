@@ -1,45 +1,88 @@
 
 <template>
     <div class="chat">
+        <img src="@/assets/logo.png" class="logo">
+        <div class="resultChat">
+            <ChatBox></ChatBox>
+        </div>
         <canvas ref="canvas"></canvas>
+        <div class="input">
+            <InputChat></InputChat>
+        </div>
     </div>
 </template>
 
 <style scoped>
-.chat{
-    width:100%;
-    border:1px solid green;
+.input{
+    position: fixed;
+    
+    /* border: 1px solid green; */
+
 }
+.logo{
+    width: 80%;
+    max-width: 600px;
+    height: auto;
+    object-fit: contain;
+    /* border:1px solid blue; */
+}
+.chat{
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:space-around;
+    width:100%;
+    /* border:1px solid green; */
+}
+
 canvas{
     display:block;
     width:100%;
-    height:100%;
+    height:40%;
 }
 
+.resultChat{
+    position: relative;
+    width: 100%;
+    height: 25%;
+    /* border: 1px solid red; */
+}
 </style>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue';
+import ChatBox from '@/components/Chat/ChatBox.vue';
+import InputChat from '@/components/Chat/InputChat.vue';
+import { ref, onMounted, nextTick, onUnmounted } from 'vue';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const canvas = ref(null);
-let mixer;
+let mixer, renderer, camera, scene, controls;
+
+const resizeCanvas = () => {
+    const parentElement = canvas.value.parentElement;
+    const width = parentElement.clientWidth;
+    const height = parentElement.clientHeight*0.5;
+
+    renderer.setSize(width, height);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+};
 
 onMounted(async () => {
     await nextTick();
 
     const parentElement = canvas.value.parentElement;
     const width = parentElement.clientWidth;
-    const height = parentElement.clientHeight;
+    const height = parentElement.clientHeight*0.5;
 
-    const scene = new THREE.Scene();
+    scene = new THREE.Scene();
 
-    const camera = new THREE.PerspectiveCamera(20, width / height, 0.1, 1000);
-    camera.position.set(0, 7, 70); // 카메라 위치 설정
+    camera = new THREE.PerspectiveCamera(20, width / height, 0.1, 1000);
+    camera.position.set(0, 7, 40); // 카메라 위치 설정
 
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas.value });
+    renderer = new THREE.WebGLRenderer({ canvas: canvas.value });
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
 
@@ -51,14 +94,14 @@ onMounted(async () => {
     const ambientLight = new THREE.AmbientLight(0x404040); // 기본 조명 추가
     scene.add(ambientLight);
 
-    const controls = new OrbitControls(camera, renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
     controls.screenSpacePanning = false;
     controls.maxPolarAngle = Math.PI/2;
     controls.minPolarAngle = Math.PI/2;
     controls.enablePan = false;
-    controls.target.set(0,0,0);
+    controls.target.set(0,-4,0);
     controls.update();
 
     const fbxLoader = new FBXLoader();
@@ -107,14 +150,8 @@ onMounted(async () => {
     const animate = () => {
         requestAnimationFrame(animate);
 
-        // const currentTime = Date.now();
-        // const delta = (currentTime - previousTime) / 1000;
-        // previousTime = currentTime;
-
         const delta = clock.getDelta();
         if (mixer) mixer.update(delta);
-
-        // controls.update();
 
         light.position.copy(camera.position);
         
@@ -122,6 +159,13 @@ onMounted(async () => {
     };
 
     animate();
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 });
+
+onUnmounted(()=>{
+    window.removeEventListener('resize', resizeCanvas);
+})
 
 </script>
