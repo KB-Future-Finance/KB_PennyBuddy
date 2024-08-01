@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     
     <nav>
-        <span class="material-symbols-rounded icon">sync</span>
+        <span class="material-symbols-rounded icon" @click="refreshPage">sync</span>
         <span class="material-symbols-rounded icon">checkroom</span>
         <span class="material-symbols-rounded icon">dark_mode</span>
         <RouterLink to="/"><span class="material-symbols-rounded icon">logout</span></RouterLink>
@@ -33,4 +33,7 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 
+const refreshPage =() => {
+    window.location.reload();
+}
 </script>
