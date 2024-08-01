@@ -74,7 +74,6 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
     .box{
         flex-grow: 1;
-        min-width: 400px;
         max-width: 100%;
         height : 200px;
         width: 30%;
@@ -83,6 +82,7 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
         
         margin: 10px 10px;
         padding : 20px;
+        box-sizing: border-box;
 
         border-radius : 15px;
         box-shadow: 5px 5px 10px rgb(221, 215, 202);
@@ -109,5 +109,13 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
             height: auto;
             flex-direction:row;
         }
+
+        .box{
+            min-width: none;
+            width: 80%;
+
+            box-sizing: border-box;
+        }
+        
     }
     </style>
