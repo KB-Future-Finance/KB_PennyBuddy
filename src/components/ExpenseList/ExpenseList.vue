@@ -1,141 +1,264 @@
 <template>
-  <div class="expense-list">
-    <header>
-      <!-- <img src="@/assets/penny-buddy-logo.png" alt="Penny Buddy Logo"/> -->
-      <div class="rabbit-image"></div>
-    </header>
-    <main>
-      <div class="filter-section">
-        <vue3-datepicker v-model="startDate" placeholder="시작일" />
-        <vue3-datepicker v-model="endDate" placeholder="종료일" />
-        <div class="radio-group">
-          <label><input type="radio" v-model="filterType" value="전체" /> 전체</label>
-          <label><input type="radio" v-model="filterType" value="수입" /> 수입</label>
-          <label><input type="radio" v-model="filterType" value="지출" /> 지출</label>
-        </div>
-        <div class="checkbox-group">
-          <label v-for="category in categories" :key="category.id">
-            <input type="checkbox" v-model="selectedCategories" :value="category.id" /> {{ category.name }}
-          </label>
-        </div>
-      </div>
-      <div class="data-section">
-        <table>
-          <thead>
-            <tr>
-              <th>날짜</th>
-              <th>카테고리</th>
-              <th>금액</th>
-              <th>내용</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in displayedData" :key="item.id">
-              <td>{{ item.date }}</td>
-              <td>{{ item.category }}</td>
-              <td>{{ item.amount }}</td>
-              <td>{{ item.description }}</td>
-            </tr>
-          </tbody>
+  <div class="container">
+    <!-- 필터 섹션 -->
+    <div class="filter-section">
+      <form @submit.prevent="submitForm">
+        <table class="filter-table">
+          <tr>
+            <td>
+              <label for="dateRange">조회기간</label>
+              <v-date-picker v-model="dateRange" is-range>
+                <template #default="{ inputValue, inputEvents }">
+                  <div class="flex justify-center items-center">
+                    <input :value="inputValue.start" v-on="inputEvents.start" class="base-input" readonly />
+                    <span class="icon-arrow-right"></span>
+                    <input :value="inputValue.end" v-on="inputEvents.end" class="base-input" readonly />
+                  </div>
+                </template>
+              </v-date-picker>
+            </td>
+          </tr>
+          <tr>
+            <td>분류</td>
+            <td>
+              <input type="radio" id="all" value="" v-model="type" @change="filterCategories" />
+              <label for="all">전체</label>
+              <input type="radio" id="income" value="1" v-model="type" @change="filterCategories" />
+              <label for="income">수입</label>
+              <input type="radio" id="expense" value="2" v-model="type" @change="filterCategories" />
+              <label for="expense">지출</label>
+            </td>
+          </tr>
+          <tr v-if="type">
+            <td>카테고리</td>
+            <td>
+              <div class="checkbox-container">
+                <div v-for="category in filteredCategories" :key="category.category_id" class="checkbox-item">
+                  <input type="checkbox" :value="category.category_id" v-model="categories" />
+                  <label>{{ category.category_name }}</label>
+                </div>
+              </div>
+            </td>
+          </tr>
         </table>
-      </div>
-      <div class="pagination">
-        <button @click="prevPage" :disabled="currentPage === 1">이전</button>
-        <button v-for="page in totalPages" :key="page" @click="changePage(page)">{{ page }}</button>
-        <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
-      </div>
-    </main>
-    <footer>
-      <div>총 수입: {{ totalIncome }}</div>
-      <div>총 지출: {{ totalExpense }}</div>
-    </footer>
+        <button type="submit">조회</button>
+      </form>
+    </div>
+
+    <!-- 기록 목록 테이블 -->
+    <table class="expense-table">
+      <thead>
+        <tr>
+          <th>날짜</th>
+          <th>카테고리</th>
+          <th>금액</th>
+          <th>제목</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="record in records" :key="record.record_id">
+          <td>{{ formatDate(record.reg_date) }}</td>
+          <td>{{ record.category_name }}</td>
+          <td :class="amountClass(record.category_type)">{{ formatAmount(record.amount, record.category_type) }}</td>
+          <td>{{ record.record_memo }}</td>
+          <td>
+            <button class="edit-button">수정</button>
+            <button class="delete-button">삭제</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 수입 지출 체크 -->
+    <div class="total-amount">
+      <span class="income">총 수입: {{ formatAmount(totalIncome, '1') }}</span>
+      <span class="expense">총 지출: {{ formatAmount(totalExpense, '2') }}</span>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination">
+      <button @click="prevPageGroup" :disabled="currentPage === 1">이전</button>
+      <span v-for="page in visiblePages" :key="page">
+        <button @click="fetchRecords(page)" :class="{ active: page === currentPage }">{{ page }}</button>
+      </span>
+      <button @click="nextPageGroup" :disabled="currentPageGroup * maxVisiblePages >= totalPages">다음</button>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
 import axios from 'axios';
-import Datepicker from 'vue3-datepicker';
+import 'v-calendar/dist/style.css';
+import { setupCalendar, DatePicker } from 'v-calendar';
+import '@/assets/Expense/ExpenseList.css'; // CSS 파일을 가져옵니다.
 
 export default {
+  name: 'ExpenseList',
   components: {
-    'vue3-datepicker': Datepicker
+    VDatePicker: DatePicker,
   },
   data() {
     return {
-      startDate: null,
-      endDate: null,
-      filterType: '전체',
-      categories: [],
-      selectedCategories: [],
-      data: [],
+      records: [],
       currentPage: 1,
-      itemsPerPage: 10
+      totalPages: 1,
+      maxVisiblePages: 3, // 최대 표시할 페이지 수
+      currentPageGroup: 1,
+      dateRange: {
+        start: '',
+        end: ''
+      },
+      type: '',
+      categories: [],
+      allCategories: [],  // 전체 카테고리 배열
+      filteredCategories: [],  // 필터링된 카테고리 배열
+      totalIncome: 0,  // 총 수입
+      totalExpense: 0,  // 총 지출
     };
   },
-  computed: {
-    filteredData() {
-      return this.data.filter(item => {
-        const inDateRange = (!this.startDate || new Date(item.date) >= new Date(this.startDate)) &&
-                            (!this.endDate || new Date(item.date) <= new Date(this.endDate));
-        const matchesType = this.filterType === '전체' || item.type === this.filterType;
-        const matchesCategory = this.selectedCategories.length === 0 || this.selectedCategories.includes(item.categoryId);
-
-        return inDateRange && matchesType && matchesCategory;
-      });
-    },
-    displayedData() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredData.slice(start, end);
-    },
-    totalPages() {
-      return Math.ceil(this.filteredData.length / this.itemsPerPage);
-    },
-    totalIncome() {
-      return this.data.filter(item => item.type === '수입').reduce((sum, item) => sum + item.amount, 0);
-    },
-    totalExpense() {
-      return this.data.filter(item => item.type === '지출').reduce((sum, item) => sum + item.amount, 0);
+  watch: {
+    type() {
+      this.filterCategories();
     }
   },
+  computed: {
+    visiblePages() {
+      const pages = [];
+      let start = (this.currentPageGroup - 1) * this.maxVisiblePages + 1;
+      let end = Math.min(start + this.maxVisiblePages - 1, this.totalPages);
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      return pages;
+    }
+  },
+  created() {
+    this.fetchRecords();
+    this.fetchTotalAmount();
+    this.fetchCategories();  // 카테고리 데이터를 가져옴
+  },
   methods: {
-    fetchData() {
-      axios.get('/api/record/list')
+    submitForm() {
+      this.currentPage = 1; // 새로운 필터를 적용할 때 페이지를 1로 설정
+      this.fetchRecords();
+    },
+    fetchRecords(page = this.currentPage) {
+      if (typeof page === 'object') page = 1; // page가 이벤트 객체인 경우 1로 설정
+      const params = {
+        startDate: this.dateRange.start ? this.formatDateToISO(this.dateRange.start) : null,
+        endDate: this.dateRange.end ? this.formatDateToISO(this.dateRange.end) : null,
+        type: this.type,
+        categories: this.categories.length ? this.categories : null,
+        page: page,
+        size: 10,  // 페이지 크기 설정
+        member_Id: '1'  // 실제 member_Id를 여기에 넣으세요
+      };
+
+      axios.get('/api/record/list', { params })
         .then(response => {
-          this.data = response.data;
+          this.records = response.data.records;
+          this.totalPages = response.data.totalPages;
+          this.currentPage = response.data.currentPage;
+          this.filterCategories();  // 필터링 적용
+          this.updatePageGroup();
         })
         .catch(error => {
           console.error(error);
         });
     },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage -= 1;
+    fetchTotalAmount() {
+      const params = {
+        startDate: this.dateRange.start ? this.formatDateToISO(this.dateRange.start) : null,
+        endDate: this.dateRange.end ? this.formatDateToISO(this.dateRange.end) : null,
+        type: this.type,
+        categories: this.categories.length ? this.categories : null,
+        member_Id: '1'  // 실제 member_Id를 여기에 넣으세요
+      };
+
+      axios.get('/api/record/totalAmount', { params })
+        .then(response => {
+          this.totalIncome = response.data.totalIncome;
+          this.totalExpense = response.data.totalExpense;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    fetchCategories() {
+      const params = {
+        startDate: this.dateRange.start ? this.formatDateToISO(this.dateRange.start) : null,
+        endDate: this.dateRange.end ? this.formatDateToISO(this.dateRange.end) : null,
+        member_Id: '1'  // 실제 member_Id를 여기에 넣으세요
+      };
+
+      axios.get('/api/record/category', { params })
+        .then(response => {
+          this.allCategories = response.data.haveCategories;
+          this.filterCategories();
+        })
+        .catch(error => {
+          console.error("Error fetching categories:", error);
+        });
+    },
+    filterCategories() {
+      if (this.type === '1') { // 수입
+        this.filteredCategories = this.allCategories.filter(category => category.category_type === '1');
+      } else if (this.type === '2') { // 지출
+        this.filteredCategories = this.allCategories.filter(category => category.category_type === '2');
+      } else { // 전체
+        this.filteredCategories = [];
+      }
+      this.categories = []; // 필터링할 때마다 선택된 카테고리 초기화
+    },
+    prevPageGroup() {
+      if (this.currentPageGroup > 1) {
+        this.currentPageGroup--;
+        this.fetchRecords((this.currentPageGroup - 1) * this.maxVisiblePages + 1);
       }
     },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage += 1;
+    nextPageGroup() {
+      if (this.currentPageGroup * this.maxVisiblePages < this.totalPages) {
+        this.currentPageGroup++;
+        this.fetchRecords((this.currentPageGroup - 1) * this.maxVisiblePages + 1);
       }
     },
-    changePage(page) {
-      this.currentPage = page;
+    updatePageGroup() {
+      this.currentPageGroup = Math.ceil(this.currentPage / this.maxVisiblePages);
+    },
+    formatDate(date) {
+      let d = new Date(date);
+      let month = '' + (d.getMonth() + 1);
+      let day = '' + d.getDate();
+      let year = d.getFullYear();
+
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return [year, month, day].join('-');
+    },
+    formatDateToISO(date) {
+      return new Date(date).toISOString();
+    },
+    formatAmount(amount, type) {
+      let formattedAmount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return type === '1' ? `+${formattedAmount}원` : `-${formattedAmount}원`;
+    },
+    amountClass(type) {
+      return type === '1' ? 'income' : 'expense';
     }
-  },
-  created() {
-    this.fetchData();
-    axios.get('/api/categories')
-      .then(response => {
-        this.categories = response.data;
-      })
-      .catch(error => {
-        console.error(error);
-      });
   }
 };
 </script>
 
-<style>
-/* Add necessary styles here */
+<style scoped>
+/* .base-input {
+  border: none;
+  background: transparent;
+  text-align: center;
+}
+
+.icon-arrow-right {
+  margin: 0 10px;
+} */
 </style>

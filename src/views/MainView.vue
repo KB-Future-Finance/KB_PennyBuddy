@@ -1,5 +1,6 @@
 <script setup>
 import MenuBar from '@/components/common/MenuBarComponent.vue'
+import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 </script>
 
 <template>
@@ -7,7 +8,9 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
         <MenuBar></MenuBar>
     </div>
     <div class="main">
-        <div class="chat">chatbot영역</div>
+        <div class="chat">
+            <ChatBot></ChatBot>
+        </div>
         <div class = "flex-container">
             <div class = "box" style="height:20%;">컴포넌트1</div>
             <div class = "box">컴포넌트2</div>
@@ -22,21 +25,27 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
     </template>
     
     <style scoped>
+
     .menu{
-        position:sticky;
-        top:0;
-        float: right;
-        margin-right : 4%;
+        position:fixed;
+        top:20px;
+        right: 20px;
+        
+        z-index: 2;
+
+        /* border: 1px solid red; */
+
+        margin-right: 3%;
     }
 
     .main {
         display: flex;
         flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
+        justify-content: stretch;
+        align-items: center;
         flex-wrap: wrap;
 
-        height:80%;
+        height:100%;
         width: 100%;
 
         box-sizing: border-box;
@@ -53,14 +62,14 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
 
         flex-wrap: wrap;
 
-        height:100%;
-        width: calc(100% - 320px);
+        height:80%;
 
         /* border:5px solid red;  */
         box-sizing: border-box;
 
         padding-left: 20px;
         padding-right: 20px;
+        padding-bottom: 20px;
     }
 
     .box{
@@ -72,7 +81,7 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
 
         background-color : white;
         
-        margin: 20px 10px;
+        margin: 10px 10px;
         padding : 20px;
 
         border-radius : 15px;
@@ -84,7 +93,7 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
     .chat{
         flex: 1 1 25%;
         /* border: 5px solid yellow; */
-        height : 100%;
+        height : 90vh;
         min-width: 300px;
     }
 
