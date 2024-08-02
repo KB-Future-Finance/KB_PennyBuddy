@@ -111,6 +111,22 @@ form{
     overflow-y:auto;
 }
 
+form::-webkit-scrollbar{
+    width: 10px;
+    height: 10px;
+}
+form::-webkit-scrollbar-track{
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+form::-webkit-scrollbar-thumb{
+    background: #FFC85E;
+    border-radius: 10px;
+}
+form::-webkit-scrollbar-thumb:hover{
+    background: #ffcb7c;
+}
+
 .material-symbols-rounded {
     font-variation-settings:
         'FILL' 0,
