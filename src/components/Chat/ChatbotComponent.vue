@@ -6,6 +6,8 @@
             <ChatBox></ChatBox>
         </div>
         <canvas ref="canvas" class="idle"></canvas>
+        <!-- 테스트코드 -->
+        <button type="button" @click="changeTexture">의상바꾸기</button>
         <div class="input">
             <InputChat></InputChat>
         </div>
@@ -24,6 +26,7 @@
     max-width: 600px;
     height: auto;
     object-fit: contain;
+    margin-bottom: 20px;
     /* border:1px solid blue; */
 }
 .chat{
@@ -43,6 +46,7 @@ canvas{
 
 .resultChat{
     position: relative;
+    bottom: -20px;
     width: 100%;
     height: 25%;
     /* border: 1px solid red; */
@@ -94,6 +98,31 @@ const handleCanvasClick = () => {
     canvas.value.classList.remove('idle');
     canvas.value.classList.add('dance');
     setAnimation('dance');
+}
+
+const changeTexture = () => {
+    const newTextureUrl = new URL('@/assets/texture_green.jpg', import.meta.url).href;
+    const textureLoader = new THREE.TextureLoader();
+
+    textureLoader.load(newTextureUrl, (newTexture) => {
+        scene.traverse((child) => {
+            if (child.isMesh && child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach((material) => {
+                        if (material.map) {
+                            material.map = newTexture;
+                            material.needsUpdate = true;
+                        }
+                    });
+                } else {
+                    if (child.material.map) {
+                        child.material.map = newTexture;
+                        child.material.needsUpdate = true;
+                    }
+                }
+            }
+        });
+    });
 }
 
 onMounted(async () => {
