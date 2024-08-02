@@ -3,7 +3,7 @@
     
     <nav>
         <span class="material-symbols-rounded icon" @click="refreshPage">sync</span>
-        <span class="material-symbols-rounded icon">checkroom</span>
+        <RouterLink to="/style"><span class="material-symbols-rounded icon">checkroom</span></RouterLink>
         <span class="material-symbols-rounded icon">dark_mode</span>
         <RouterLink to="/"><span class="material-symbols-rounded icon">logout</span></RouterLink>
     </nav>

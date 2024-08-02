@@ -2,8 +2,6 @@
 import MenuBar from '@/components/common/MenuBarComponent.vue'
 import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
-//테스트코드
-import Input from '@/components/Input/InputFormComponent.vue'
 </script>
 
 <template>
@@ -15,15 +13,22 @@ import Input from '@/components/Input/InputFormComponent.vue'
             <ChatBot></ChatBot>
         </div>
         <div class = "flex-container">
-            <div class = "box" style="height:20%;">컴포넌트1</div>
-            <div class = "box">컴포넌트2</div>
-            <div class = "box">컴포넌트3</div>
-            <div class = "box">컴포넌트4</div>
-            <div class = "box">컴포넌트5</div>
-            <div class = "box">컴포넌트5</div>
-            <div class = "box">
-                <!-- 테스트 -->
-                <Input></Input>
+            <div class = "character flex">
+                <div class = "box">컴포넌트2</div>
+                <div class = "box">컴포넌트2</div>
+                <div class = "box">컴포넌트2</div>
+                <div class = "box">컴포넌트2</div>
+                <div class = "box">컴포넌트2</div>
+            </div>
+            <div class = "item flex">
+                <div class = "box">컴포넌트3</div>
+                <div class = "box">컴포넌트4</div>
+                <div class = "box">컴포넌트5</div>
+                <div class = "box">컴포넌트5</div>
+                <div class = "box">컴포넌트3</div>
+                <div class = "box">컴포넌트4</div>
+                <div class = "box">컴포넌트5</div>
+                <div class = "box">컴포넌트5</div>
             </div>
         </div>
     </div>
@@ -64,12 +69,13 @@ import Input from '@/components/Input/InputFormComponent.vue'
         flex: 3 1 75%;
         display:flex;
         flex-direction: column;
-        align-items: center;
+        align-items: start;
+        gap: 20px;
 
         flex-wrap: wrap;
 
         height:80%;
-        max-width: 80%;
+        max-width: 75%;
 
         /* border:5px solid red;  */
         box-sizing: border-box;
@@ -77,6 +83,41 @@ import Input from '@/components/Input/InputFormComponent.vue'
         padding-left: 20px;
         padding-right: 20px;
         padding-bottom: 20px;
+    }
+
+    .flex{
+        display:flex;
+        max-width: 100%;
+        flex-wrap:nowrap;
+        overflow-x: auto;
+        /* border:1px solid red; */
+    }
+
+    .flex::-webkit-scrollbar{
+        width: 10px;
+        height: 10px;
+    }
+    .flex::-webkit-scrollbar-track{
+        background: #ffffff;
+        border-radius: 10px;
+    }
+    .flex::-webkit-scrollbar-thumb{
+        background: #FFC85E;
+        border-radius: 10px;
+    }
+    .flex::-webkit-scrollbar-thumb:hover{
+        background: #ffcb7c;
+    }
+
+    .character .box{
+        width:30%;
+        min-width:250px;
+        height:400px;
+    }
+
+    .item .box{
+        min-width:200px;
+        height:200px;
     }
 
     .box{
