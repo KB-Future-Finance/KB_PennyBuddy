@@ -20,6 +20,7 @@
 
     background: #ffffff;
     border-radius: 100px;
+    border: 2px solid rgb(39, 30, 30);
 
     position:fixed;
     bottom:20px;

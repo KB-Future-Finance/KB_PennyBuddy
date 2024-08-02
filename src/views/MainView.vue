@@ -1,6 +1,9 @@
 <script setup>
 import MenuBar from '@/components/common/MenuBarComponent.vue'
 import ChatBot from '@/components/Chat/ChatbotComponent.vue'
+
+//테스트코드
+import Input from '@/components/Input/InputFormComponent.vue'
 </script>
 
 <template>
@@ -18,7 +21,10 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
             <div class = "box">컴포넌트4</div>
             <div class = "box">컴포넌트5</div>
             <div class = "box">컴포넌트5</div>
-            <div class = "box">컴포넌트5</div>
+            <div class = "box">
+                <!-- 테스트 -->
+                <Input></Input>
+            </div>
         </div>
     </div>
     
@@ -86,6 +92,7 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
         border-radius : 15px;
         box-shadow: 5px 5px 10px rgb(221, 215, 202);
+        border:1px solid rgb(240, 240, 240);
 
         /* border:1px solid red; */
     }
