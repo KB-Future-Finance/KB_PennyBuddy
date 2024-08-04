@@ -1,22 +1,16 @@
-
 <template>
     <div class="chat">
         <img src="@/assets/logo.png" class="logo">
         <div class="resultChat">
             <ChatBox></ChatBox>
         </div>
-        <canvas ref="canvas"></canvas>
+        <canvas ref="canvas" class="idle"></canvas>
+        <!-- 테스트코드 -->
+        <button type="button" @click="changeTexture">의상바꾸기</button>
         <div class="input">
             <InputChat></InputChat>
         </div>
     </div>
-    <v-date-picker 
-              v-if="showStartDatePicker" 
-              v-model="startDate" 
-              is-inline 
-              @change="onStartDateChange"
-              @blur="showStartDatePicker = false">
-            </v-date-picker>
 </template>
 
 <style scoped>
@@ -31,6 +25,7 @@
     max-width: 600px;
     height: auto;
     object-fit: contain;
+    margin-bottom: 20px;
     /* border:1px solid blue; */
 }
 .chat{
@@ -50,6 +45,7 @@ canvas{
 
 .resultChat{
     position: relative;
+    bottom: -20px;
     width: 100%;
     height: 25%;
     /* border: 1px solid red; */
@@ -66,6 +62,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const canvas = ref(null);
 let mixer, renderer, camera, scene, controls;
+let idleAction, danceAction;
+const transitionDuration = 0.5;
 
 const resizeCanvas = () => {
     const parentElement = canvas.value.parentElement;
@@ -76,6 +74,55 @@ const resizeCanvas = () => {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 };
+
+const setAnimation = (action) => {
+    if(action === 'dance'){
+        if (idleAction && danceAction) {
+            idleAction.crossFadeTo(danceAction, transitionDuration, false);
+            danceAction.reset();
+            danceAction.play();
+            danceAction.getMixer().addEventListener('finished', () => {
+                danceAction.stop();
+                danceAction.crossFadeTo(idleAction, transitionDuration, false);
+                idleAction.reset();
+                idleAction.play();
+                canvas.value.classList.remove('dance');
+                canvas.value.classList.add('idle');
+            });
+        }
+    }
+}
+
+const handleCanvasClick = () => {
+    canvas.value.classList.remove('idle');
+    canvas.value.classList.add('dance');
+    setAnimation('dance');
+}
+
+const changeTexture = () => {
+    const newTextureUrl = new URL('@/assets/texture_green.jpg', import.meta.url).href;
+    const textureLoader = new THREE.TextureLoader();
+
+    textureLoader.load(newTextureUrl, (newTexture) => {
+        scene.traverse((child) => {
+            if (child.isMesh && child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach((material) => {
+                        if (material.map) {
+                            material.map = newTexture;
+                            material.needsUpdate = true;
+                        }
+                    });
+                } else {
+                    if (child.material.map) {
+                        child.material.map = newTexture;
+                        child.material.needsUpdate = true;
+                    }
+                }
+            }
+        });
+    });
+}
 
 onMounted(async () => {
     await nextTick();
@@ -112,9 +159,10 @@ onMounted(async () => {
     controls.update();
 
     const fbxLoader = new FBXLoader();
-    const fbxModelUrl = new URL('@/assets/kiki_idle.fbx', import.meta.url).href;
+
+    const idleModelUrl = new URL('@/assets/kiki_idle.fbx', import.meta.url).href;
     fbxLoader.load(
-        fbxModelUrl,
+        idleModelUrl,
         (object) => {
             object.scale.set(1, 1, 1); // 모델 크기 조정
             object.position.set(0, 0, 0);
@@ -137,8 +185,12 @@ onMounted(async () => {
         });
 
         mixer = new THREE.AnimationMixer(object);
-        const action = mixer.clipAction(object.animations[0]);
-        action.play();
+        if (object.animations && object.animations.length > 0) { // 애니메이션이 있는지 확인
+            idleAction = mixer.clipAction(object.animations[0]);
+            idleAction.play();
+        } else {
+            console.error('No animations found in the idle model.');
+        }
 
         scene.add(object);
 
@@ -149,6 +201,26 @@ onMounted(async () => {
         },
         (error) => {
         console.error('An error happened', error);
+        }
+    );
+
+    const danceModelUrl = new URL('@/assets/kiki_dance.fbx', import.meta.url).href;
+    fbxLoader.load(
+        danceModelUrl,
+        (object) => {
+            if (object.animations && object.animations.length > 0) {
+                danceAction = mixer.clipAction(object.animations[0]);
+                danceAction.loop = THREE.LoopOnce;
+                danceAction.clampWhenFinished = true; // 애니메이션이 끝나면 마지막 프레임 유지
+            } else {
+                console.error('No animations found in the dance model.');
+            }
+        },
+        (xhr) => {
+            console.log((xhr.loaded/xhr.total)*100+'% loaded');
+        },
+        (error) => {
+            console.error('An error happened', error);
         }
     );
 
@@ -169,10 +241,16 @@ onMounted(async () => {
 
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
+
+    canvas.value.addEventListener('click', handleCanvasClick);
 });
 
 onUnmounted(()=>{
     window.removeEventListener('resize', resizeCanvas);
+
+    if (canvas.value) {
+        canvas.value.removeEventListener('click', handleCanvasClick);
+    }
 })
 
 </script>

@@ -1,6 +1,9 @@
 <script setup>
 import MenuBar from '@/components/common/MenuBarComponent.vue'
 import ChatBot from '@/components/Chat/ChatbotComponent.vue'
+
+//테스트코드
+import Input from '@/components/Input/InputFormComponent.vue'
 </script>
 
 <template>
@@ -17,8 +20,11 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
             <div class = "box">컴포넌트3</div>
             <div class = "box">컴포넌트4</div>
             <div class = "box">컴포넌트5</div>
-            <div class = "box">컴포넌트5</div>
             <router-link class="box" style="height:20%;" to="/expense-list">컴포넌트5</router-link>
+            <div class = "box">
+                <!-- 테스트 -->
+                <Input></Input>
+            </div>
         </div>
     </div>
     
@@ -63,6 +69,7 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
         flex-wrap: wrap;
 
         height:80%;
+        max-width: 80%;
 
         /* border:5px solid red;  */
         box-sizing: border-box;
@@ -74,7 +81,6 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
     .box{
         flex-grow: 1;
-        min-width: 400px;
         max-width: 100%;
         height : 200px;
         width: 30%;
@@ -83,9 +89,11 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
         
         margin: 10px 10px;
         padding : 20px;
+        box-sizing: border-box;
 
         border-radius : 15px;
         box-shadow: 5px 5px 10px rgb(221, 215, 202);
+        border:1px solid rgb(240, 240, 240);
 
         /* border:1px solid red; */
     }
@@ -109,5 +117,13 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
             height: auto;
             flex-direction:row;
         }
+
+        .box{
+            min-width: none;
+            width: 80%;
+
+            box-sizing: border-box;
+        }
+        
     }
     </style>

@@ -1,4 +1,3 @@
-
 <template>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
@@ -20,6 +19,7 @@
 
     background: #ffffff;
     border-radius: 100px;
+    border: 2px solid rgb(39, 30, 30);
 
     position:fixed;
     bottom:20px;
