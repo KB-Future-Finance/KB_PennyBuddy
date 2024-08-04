@@ -1,48 +1,11 @@
+<script setup>
+import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
+</script>
+
 <template>
   <div class="container">
-    <!-- 필터 섹션 -->
-    <div class="filter-section">
-      <form @submit.prevent="submitForm">
-        <table class="filter-table">
-          <tr>
-            <td>
-              <label for="dateRange">조회기간</label>
-              <v-date-picker v-model="dateRange" is-range>
-                <template #default="{ inputValue, inputEvents }">
-                  <div class="flex justify-center items-center">
-                    <input :value="inputValue.start" v-on="inputEvents.start" class="base-input" readonly />
-                    <span class="icon-arrow-right"></span>
-                    <input :value="inputValue.end" v-on="inputEvents.end" class="base-input" readonly />
-                  </div>
-                </template>
-              </v-date-picker>
-            </td>
-          </tr>
-          <tr>
-            <td>분류</td>
-            <td>
-              <input type="radio" id="all" value="" v-model="type" @change="filterCategories" />
-              <label for="all">전체</label>
-              <input type="radio" id="income" value="1" v-model="type" @change="filterCategories" />
-              <label for="income">수입</label>
-              <input type="radio" id="expense" value="2" v-model="type" @change="filterCategories" />
-              <label for="expense">지출</label>
-            </td>
-          </tr>
-          <tr v-if="type">
-            <td>카테고리</td>
-            <td>
-              <div class="checkbox-container">
-                <div v-for="category in filteredCategories" :key="category.category_id" class="checkbox-item">
-                  <input type="checkbox" :value="category.category_id" v-model="categories" />
-                  <label>{{ category.category_name }}</label>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </table>
-        <button type="submit">조회</button>
-      </form>
+    <div>
+      <FilterComponent @filter-applied="applyFilter"></FilterComponent>
     </div>
 
     <!-- 기록 목록 테이블 -->
@@ -78,11 +41,11 @@
 
     <!-- 페이지네이션 -->
     <div class="pagination">
-      <button @click="prevPageGroup" :disabled="currentPage === 1">이전</button>
+      <button @click="prevPage" :disabled="currentPage === 1">이전</button>
       <span v-for="page in visiblePages" :key="page">
-        <button @click="fetchRecords(page)" :class="{ active: page === currentPage }">{{ page }}</button>
+        <button @click="fetchRecords({ ...filterData, page })" :class="{ active: page === currentPage }">{{ page }}</button>
       </span>
-      <button @click="nextPageGroup" :disabled="currentPageGroup * maxVisiblePages >= totalPages">다음</button>
+      <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
     </div>
   </div>
 </template>
@@ -96,7 +59,7 @@ import '@/assets/Expense/ExpenseList.css'; // CSS 파일을 가져옵니다.
 export default {
   name: 'ExpenseList',
   components: {
-    VDatePicker: DatePicker,
+    DatePicker,
   },
   data() {
     return {
@@ -115,6 +78,7 @@ export default {
       filteredCategories: [],  // 필터링된 카테고리 배열
       totalIncome: 0,  // 총 수입
       totalExpense: 0,  // 총 지출
+      filterData: {} // 필터링 데이터를 상태로 유지
     };
   },
   watch: {
@@ -139,60 +103,82 @@ export default {
     this.fetchCategories();  // 카테고리 데이터를 가져옴
   },
   methods: {
-    submitForm() {
-      this.currentPage = 1; // 새로운 필터를 적용할 때 페이지를 1로 설정
-      this.fetchRecords();
+    applyFilter(filterData) {
+      this.filterData = filterData; // 필터링 데이터를 상태로 저장
+      this.currentPage = 1; // 필터링 적용 시 첫 페이지로 이동
+      this.fetchRecords(filterData);
     },
-    fetchRecords(page = this.currentPage) {
-      if (typeof page === 'object') page = 1; // page가 이벤트 객체인 경우 1로 설정
-      const params = {
-        startDate: this.dateRange.start ? this.formatDateToISO(this.dateRange.start) : null,
-        endDate: this.dateRange.end ? this.formatDateToISO(this.dateRange.end) : null,
-        type: this.type,
-        categories: this.categories.length ? this.categories : null,
-        page: page,
-        size: 10,  // 페이지 크기 설정
-        member_Id: '1'  // 실제 member_Id를 여기에 넣으세요
-      };
+    fetchRecords(filterData = {}) {
+      console.log("Fetch records called with data:", filterData);
+      const {
+        startDate = this.dateRange.start,
+        endDate = this.dateRange.end,
+        category_type = this.category_type || null,
+        categories = (this.categories && this.categories.length > 0) ? this.categories : null, // 빈 배열 대신 null을 전달
+        page = this.currentPage
+      } = filterData;
 
-      axios.get('/api/record/list', { params })
+      const params = new URLSearchParams();
+      if (startDate) params.append('startDate', new Date(startDate).toISOString().split('T')[0]); // ISO 형식으로 변환
+      if (endDate) params.append('endDate', new Date(endDate).toISOString().split('T')[0]); // ISO 형식으로 변환
+      if (category_type) params.append('category_type', category_type);
+      if (categories) {
+        categories.forEach(category => params.append('categories', category)); // 수정된 부분
+      } else {
+        params.append('categories', ''); // 빈 배열을 빈 문자열로 처리
+      }
+      params.append('page', page);
+      params.append('size', 5); // 화면당 보여주는 개수 
+      params.append('member_Id', 1);
+
+      axios.get(`/api/record/list?${params.toString()}`)
         .then(response => {
           this.records = response.data.records;
           this.totalPages = response.data.totalPages;
           this.currentPage = response.data.currentPage;
           this.filterCategories();  // 필터링 적용
           this.updatePageGroup();
+          this.fetchTotalAmount(filterData); // 필터링된 데이터로 총 수입/지출 금액을 업데이트합니다.
         })
         .catch(error => {
           console.error(error);
         });
     },
-    fetchTotalAmount() {
-      const params = {
-        startDate: this.dateRange.start ? this.formatDateToISO(this.dateRange.start) : null,
-        endDate: this.dateRange.end ? this.formatDateToISO(this.dateRange.end) : null,
-        type: this.type,
-        categories: this.categories.length ? this.categories : null,
-        member_Id: '1'  // 실제 member_Id를 여기에 넣으세요
-      };
 
-      axios.get('/api/record/totalAmount', { params })
-        .then(response => {
-          this.totalIncome = response.data.totalIncome;
-          this.totalExpense = response.data.totalExpense;
-        })
-        .catch(error => {
-          console.error(error);
-        });
+    async fetchTotalAmount(filterData = {}) {
+      const {
+        startDate = this.dateRange.start,
+        endDate = this.dateRange.end,
+        category_type = this.category_type || null,
+        categories = (this.categories && this.categories.length > 0) ? this.categories : null
+      } = filterData;
+
+      const params = new URLSearchParams();
+      if (startDate) params.append('startDate', new Date(startDate).toISOString().split('T')[0]);
+      if (endDate) params.append('endDate', new Date(endDate).toISOString().split('T')[0]);
+      if (category_type) params.append('category_type', category_type);
+      if (categories) {
+        categories.forEach(category => params.append('categories', category));
+      } else {
+        params.append('categories', '');
+      }
+      params.append('member_Id', 1);
+
+      try {
+        const response = await axios.get(`/api/record/totalAmount?${params.toString()}`);
+        this.totalIncome = response.data.totalIncome;
+        this.totalExpense = response.data.totalExpense;
+      } catch (error) {
+        console.error(error);
+      }
     },
     fetchCategories() {
-      const params = {
-        startDate: this.dateRange.start ? this.formatDateToISO(this.dateRange.start) : null,
-        endDate: this.dateRange.end ? this.formatDateToISO(this.dateRange.end) : null,
-        member_Id: '1'  // 실제 member_Id를 여기에 넣으세요
-      };
+      const params = new URLSearchParams();
+      if (this.dateRange.start) params.append('startDate', new Date(this.dateRange.start).toISOString().split('T')[0]); // ISO 형식으로 변환
+      if (this.dateRange.end) params.append('endDate', new Date(this.dateRange.end).toISOString().split('T')[0]); // ISO 형식으로 변환
+      params.append('member_Id', 1);
 
-      axios.get('/api/record/category', { params })
+      axios.get(`/api/record/category?${params.toString()}`)
         .then(response => {
           this.allCategories = response.data.haveCategories;
           this.filterCategories();
@@ -211,20 +197,40 @@ export default {
       }
       this.categories = []; // 필터링할 때마다 선택된 카테고리 초기화
     },
+    updatePageGroup() {
+      this.currentPageGroup = Math.ceil(this.currentPage / this.maxVisiblePages);
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        if ((this.currentPage - 1) % this.maxVisiblePages === 0) {
+          this.prevPageGroup();
+        } else {
+          this.currentPage--;
+          this.fetchRecords({ ...this.filterData, page: this.currentPage });
+        }
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        if (this.currentPage % this.maxVisiblePages === 0) {
+          this.nextPageGroup();
+        } else {
+          this.currentPage++;
+          this.fetchRecords({ ...this.filterData, page: this.currentPage });
+        }
+      }
+    },
     prevPageGroup() {
       if (this.currentPageGroup > 1) {
         this.currentPageGroup--;
-        this.fetchRecords((this.currentPageGroup - 1) * this.maxVisiblePages + 1);
+        this.fetchRecords({ ...this.filterData, page: (this.currentPageGroup - 1) * this.maxVisiblePages + 1 });
       }
     },
     nextPageGroup() {
       if (this.currentPageGroup * this.maxVisiblePages < this.totalPages) {
         this.currentPageGroup++;
-        this.fetchRecords((this.currentPageGroup - 1) * this.maxVisiblePages + 1);
+        this.fetchRecords({ ...this.filterData, page: (this.currentPageGroup - 1) * this.maxVisiblePages + 1 });
       }
-    },
-    updatePageGroup() {
-      this.currentPageGroup = Math.ceil(this.currentPage / this.maxVisiblePages);
     },
     formatDate(date) {
       let d = new Date(date);
@@ -237,9 +243,6 @@ export default {
 
       return [year, month, day].join('-');
     },
-    formatDateToISO(date) {
-      return new Date(date).toISOString();
-    },
     formatAmount(amount, type) {
       let formattedAmount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       return type === '1' ? `+${formattedAmount}원` : `-${formattedAmount}원`;
@@ -250,15 +253,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-/* .base-input {
-  border: none;
-  background: transparent;
-  text-align: center;
-}
-
-.icon-arrow-right {
-  margin: 0 10px;
-} */
-</style>
