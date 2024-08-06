@@ -17,7 +17,7 @@ import Input from '@/components/Input/InputFormComponent.vue'
         <div class = "flex-container">
             <div class = "box" style="height:20%;">컴포넌트1</div>
             <div class = "box">컴포넌트2</div>
-            <div class = "box">컴포넌트3</div>
+            <router-link class="box" style="height:20%;" to="/chartmonth">월별차트</router-link>
             <div class = "box">컴포넌트4</div>
             <div class = "box">컴포넌트5</div>
             <router-link class="box" style="height:20%;" to="/expense-list">컴포넌트5</router-link>
