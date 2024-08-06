@@ -1,14 +1,16 @@
 <template>
-    <div id="app2">
-      <h1>월별 소비 기록</h1>
+  <div class="container">
+    <h1 class="title"> 월별 소비 기록 </h1>
+    
+    <div class="chart-container">
+      <canvas id="expenseChart"></canvas>
+    </div>
+  </div>
       <div class="year-select-container">
         <label for="year-select">년도 선택: </label>
         <select id="year-select" v-model="selectedYear" @change="fetchData">
           <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
         </select>
-      </div>
-      <div class="chart-container">
-        <canvas id="expenseChart"></canvas>
       </div>
       <div class="list-container">
         <div class="list-column">
@@ -30,7 +32,6 @@
           </div>
         </div>
       </div>
-    </div>
   </template>
   
   <script>
@@ -134,33 +135,49 @@
   };
   </script>
   
-  <style>
-  #app2 {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    text-align: center;
-    color: #2c3e50;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 1000px;
-    margin: 20px auto;
+<style scoped>
+.container{
+      width:100%;
+      height:fit-content;
+  
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+  
+      padding: 0px;
+  
+      font-size:14px;
+  
+      /* 테스트 코드 */
+      /* border: 1px solid red; */
   }
   
-  .year-select-container {
-    margin: 20px;
+  .title{
+      font-size:20px;
+      font-weight: 800;
+      text-align: left;
+      width:fit-content;
+  
+      background: linear-gradient(transparent 30%, #ffcb7c 30%);
+      display: inline-block;
+  
+      margin-bottom:20px;
+      /* border: 1px solid blue; */
   }
+
   
   .chart-container {
-    width: 80%;
+    width: 100%;
     margin: 0 auto 20px auto;
   }
+  
   
   .list-container {
     display: flex;
     justify-content: space-around;
-    width: 80%;
     margin: 20px auto;
+
+    font-size: 14px;
   }
   
   .list-column {
@@ -170,11 +187,8 @@
   .expense-item {
     display: flex;
     justify-content: space-between;
-    margin: 10px 0;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    border:1px solid red;
   }
   
   .expense-item span {
