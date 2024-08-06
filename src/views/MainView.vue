@@ -3,7 +3,7 @@ import MenuBar from '@/components/common/MenuBarComponent.vue'
 import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
 //테스트코드
-import Input from '@/components/Input/InputFormComponent.vue'
+import ExpenseList from '@/components/Main/ExpenseList.vue'
 </script>
 
 <template>
@@ -17,13 +17,13 @@ import Input from '@/components/Input/InputFormComponent.vue'
         <div class = "flex-container">
             <div class = "box" style="height:20%;">컴포넌트1</div>
             <div class = "box">컴포넌트2</div>
-            <router-link class="box" style="height:20%;" to="/chartmonth">월별차트</router-link>
+            <div class = "box">컴포넌트3</div>
             <div class = "box">컴포넌트4</div>
             <div class = "box">컴포넌트5</div>
-            <router-link class="box" style="height:20%;" to="/expense-list">컴포넌트5</router-link>
+            <div class = "box">컴포넌트5</div>
             <div class = "box">
                 <!-- 테스트 -->
-                <Input></Input>
+                <ExpenseList></ExpenseList>
             </div>
         </div>
     </div>
@@ -64,30 +64,28 @@ import Input from '@/components/Input/InputFormComponent.vue'
         flex: 3 1 75%;
         display:flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-center;
 
         flex-wrap: wrap;
 
         height:80%;
-        max-width: 80%;
+        max-width: 100%;
 
-        /* border:5px solid red;  */
+        border:5px solid red; 
         box-sizing: border-box;
-
-        padding-left: 20px;
-        padding-right: 20px;
         padding-bottom: 20px;
     }
 
     .box{
         flex-grow: 1;
         max-width: 100%;
-        height : 200px;
-        width: 30%;
+        max-height: 100%;
+        height : auto;
+        width: 32%;
+        margin-bottom: 15px;
 
         background-color : white;
         
-        margin: 10px 10px;
         padding : 20px;
         box-sizing: border-box;
 
@@ -100,7 +98,7 @@ import Input from '@/components/Input/InputFormComponent.vue'
 
     .chat{
         flex: 1 1 25%;
-        /* border: 5px solid yellow; */
+        border: 5px solid yellow;
         height : 90vh;
         min-width: 300px;
     }
