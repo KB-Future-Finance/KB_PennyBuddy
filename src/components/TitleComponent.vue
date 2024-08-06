@@ -1,25 +1,63 @@
 <template>
-    <div class="container" style="border:5px solid red;">
-        <div class=title>
+    <div @click="navigateToMain">
+        <div class=title ref="titleRef">
             <h1>나만의 <span>AI 금융 매니저</span>와 함께하는 빠르고 쉬운 가계부</h1>
             <img alt="logo" class="logo" src="@/assets/logo.png"/>
             <h2 class="blurredRectangle">화면을 클릭해서 시작하세요</h2>
         </div>
-        <div class="decoration">
-            <img alt="bird" class="bird" src="@/assets/bird.png">
-            <img alt="home" class="home" src="@/assets/home.png">
-            <img alt="cloud" class="cloud1" src="@/assets/cloud1.png">
-            <img alt="cloud" class="cloud2" src="@/assets/cloud2.png">
-            <img alt="carrot" class="carrot" src="@/assets/carrot.png">
+        <div class="decoration" ref="decorationRef">
+            <img alt="bird" class="bird" src="@/assets/background/bird.png">
+            <img alt="home" class="home" src="@/assets/background/home.png">
+            <img alt="cloud" class="cloud1" src="@/assets/background/cloud1.png">
+            <img alt="cloud" class="cloud2" src="@/assets/background/cloud2.png">
+            <img alt="carrot" class="carrot" src="@/assets/background/carrot.png">
         </div>
         
     </div>
 </template>
 
 <script>
-    export default {
-        
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter } from 'vue-router';
+
+export default {
+    setup() {
+        const router = useRouter();
+        const titleRef = ref(null);
+        const decorationRef = ref(null);
+
+        const navigateToMain = () => {
+            if(titleRef.value && decorationRef.value){
+                titleRef.value.classList.add('up');
+                decorationRef.value.classList.add('hidden');
+                setTimeout(()=>{
+                    router.push('/main')
+                }, 500);
+            }
+        };
+
+        const handleKeydown = (event) => {
+            if (event.key === 'Enter') {
+                navigateToMain();
+                console.log("Entered Key");
+            }
+        };
+
+        onMounted(() => {
+            document.addEventListener('keydown', handleKeydown);
+        });
+
+        onBeforeUnmount(() => {
+            document.removeEventListener('keydown', handleKeydown);
+        });
+
+        return {
+            navigateToMain,
+            titleRef,
+            decorationRef
+        };
     }
+}
 </script>
 
 <style scoped>
@@ -29,17 +67,6 @@ html, body{
     width:100%;
     height:100%;
     overflow:hidden;
-}
-
-.container{
-    width:100vw;
-    height:100vh;
-
-    position: fixed;
-    top:0;
-    left:0;
-
-    overflow: hidden;
 }
 
 .title{
@@ -55,8 +82,15 @@ html, body{
     justify-content: center;
     overflow: hidden;
 
+    /* 애니메이션 */
+    transition: transform 0.5s ease-in-out;
+
     /* 테스트 코드 *반드시 삭제할 것 */
-    border:1px solid blue;
+    /* border:1px solid blue; */
+}
+
+.title.up{
+    transform:translateY(-100%);
 }
 
 .logo{
@@ -73,7 +107,7 @@ html, body{
     top: 48%;
 
     /* 테스트 코드 *반드시 삭제할 것 */
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 h1{
@@ -89,7 +123,7 @@ h1{
     font-size: 24px;
 
     /* 테스트 코드 *반드시 삭제할 것 */
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 span{
@@ -120,7 +154,7 @@ span{
     top: 80%;
 
     /* 테스트 코드 *반드시 삭제할 것 */
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 .decoration{
@@ -133,7 +167,14 @@ span{
 
     overflow: hidden;
 
-    border: 2px solid green;
+    /* 종료 애니메이션 */
+    transition : opacity 0.3s ease-in-out;
+
+    /* border: 2px solid green; */
+}
+
+.decoration.hidden{
+    opacity:0;
 }
 
 .decoration > img{
@@ -141,7 +182,7 @@ span{
     /* transform: translate(-50%, -50%); */
 
     /* 테스트 코드 *반드시 삭제할 것 */
-    border: 2px solid green;
+    /* border: 2px solid green; */
 }
 
 .bird{
