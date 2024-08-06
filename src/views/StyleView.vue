@@ -14,21 +14,60 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
         </div>
         <div class = "flex-container">
             <div class = "character flex">
-                <div class = "box">컴포넌트2</div>
-                <div class = "box">컴포넌트2</div>
-                <div class = "box">컴포넌트2</div>
-                <div class = "box">컴포넌트2</div>
-                <div class = "box">컴포넌트2</div>
+                <div class = "box">
+                    키키(KIKI)<br>
+                    <img src="@/assets/character_2d/Kiki.png"/>
+                </div>
+                <div class = "box">
+                    아거(AGER)<br>
+                    <img src="@/assets/character_2d/Ager.png"/>
+                </div>
+                <div class = "box">
+                    비비(BIBI)<br>
+                    <img src="@/assets/character_2d/Bibi.png"/>
+                </div>
+                <div class = "box">
+                    콜리(COLLI)<br>
+                    <img src="@/assets/character_2d/Colli.png"/>
+                </div>
+                <div class = "box">
+                    라무(LAMU)<br>
+                    <img src="@/assets/character_2d/Lamu.png"/>
+                </div>
             </div>
             <div class = "item flex">
-                <div class = "box">컴포넌트3</div>
-                <div class = "box">컴포넌트4</div>
-                <div class = "box">컴포넌트5</div>
-                <div class = "box">컴포넌트5</div>
-                <div class = "box">컴포넌트3</div>
-                <div class = "box">컴포넌트4</div>
-                <div class = "box">컴포넌트5</div>
-                <div class = "box">컴포넌트5</div>
+                <div class = "box">
+                    선글라스<br>
+                    <img src="@/assets/item_2d/선글라스.png"/>
+                </div>
+                <div class = "box">
+                    스카프<br>
+                    <img src="@/assets/item_2d/스카프.png"/>
+                </div>
+                <div class = "box">
+                    크로스백<br>
+                    <img src="@/assets/item_2d/크로스백.png"/>
+                </div>
+                <div class = "box">
+                    넥타이<br>
+                    <img src="@/assets/item_2d/넥타이.png"/>
+                </div>
+                <div class = "box">
+                    꽃<br>
+                    <img src="@/assets/item_2d/꽃.png"/>
+                </div>
+                <div class = "box">
+                    리본<br>
+                    <img src="@/assets/item_2d/리본.png"/>
+                </div>
+                <div class = "box">
+                    모자<br>
+                    <img src="@/assets/item_2d/모자.png"/>
+                </div>
+                <div class = "box">
+                    목걸이<br>
+                    <img src="@/assets/item_2d/목걸이.png"/>
+                </div>
             </div>
         </div>
     </div>
@@ -136,7 +175,22 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
         box-shadow: 5px 5px 10px rgb(221, 215, 202);
         border:1px solid rgb(240, 240, 240);
 
+        font-size: 18px;
+        font-weight: 700;
+        text-align:center;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+
         /* border:1px solid red; */
+    }
+
+    .box img{
+        max-width: 100%;
+        max-height: 80%;
+        margin-bottom:10px;
     }
 
     .chat{
