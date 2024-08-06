@@ -1,26 +1,52 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import TitleComponent from './components/TitleComponent.vue'
+// import { RouterLink, RouterView } from 'vue-router'
+
+
 </script>
+
 
 <template>
   <!-- background -->
-  <img alt="ground" class="ground" src="@/assets/ground3.png"/>
-
-  <!-- title -->
-  <TitleComponent></TitleComponent>
+  <img alt="ground" class="ground" src="@/assets/background/ground3.png"/>
   
-    <!-- <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div> -->
-
-  <!-- <RouterView /> -->
+  <div class="flex-container">    
+      
+      <div class="router">
+        <RouterView/>
+      </div>
+  </div>
 </template>
 
 <style scoped>
+
+.flex-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 100%;
+  height: 100vh;
+
+  position:absolute;
+  top:0;
+  left:0;
+
+  align-items:flex-start;
+
+  /* border: 5px dotted green; */
+}
+
+.wrapper{
+  width: 100%;
+  /* border:5px solid yellow; */
+}
+
+.router{
+  height: 100%;
+  width:100%;
+  /* border : 5px solid greenyellow */
+}
 
 .ground {
   /* 크기 설정 */
@@ -33,6 +59,15 @@ import TitleComponent from './components/TitleComponent.vue'
   bottom: 0;
   left:50%;
   transform: translate(-50%, 10%);
+  z-index: -1;
+}
+
+@media(max-width: 1050px){
+  .router{
+    height: auto;
+    width:100%;
+    /* border : 5px solid greenyellow */
+  }
 }
 
 /* header {
