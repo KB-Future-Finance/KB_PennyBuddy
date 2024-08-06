@@ -1,5 +1,5 @@
 <template>
-    <div class="container" @click="navigateToMain">
+    <div @click="navigateToMain">
         <div class=title ref="titleRef">
             <h1>나만의 <span>AI 금융 매니저</span>와 함께하는 빠르고 쉬운 가계부</h1>
             <img alt="logo" class="logo" src="@/assets/logo.png"/>
@@ -67,17 +67,6 @@ html, body{
     width:100%;
     height:100%;
     overflow:hidden;
-}
-
-.container{
-    width:100vw;
-    height:100vh;
-
-    position: fixed;
-    top:0;
-    left:0;
-
-    overflow: hidden;
 }
 
 .title{
