@@ -1,4 +1,3 @@
-
 <template>
     <div class="speech-bubble">
         <h1>키키(KIKI)</h1>
