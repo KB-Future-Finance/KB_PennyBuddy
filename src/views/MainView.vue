@@ -2,8 +2,8 @@
 import MenuBar from '@/components/common/MenuBarComponent.vue'
 import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
-//테스트코드
-import Input from '@/components/Input/InputFormComponent.vue'
+
+
 </script>
 
 <template>
@@ -18,13 +18,10 @@ import Input from '@/components/Input/InputFormComponent.vue'
             <div class = "box" style="height:20%;">컴포넌트1</div>
             <div class = "box">컴포넌트2</div>
             <router-link class="box" style="height:20%;" to="/chartmonth">월별차트</router-link>
-            <div class = "box">컴포넌트4</div>
+            <router-link class="box" style="height:20%;" to="/chartname">카테고리별차트</router-link>
             <div class = "box">컴포넌트5</div>
             <router-link class="box" style="height:20%;" to="/expense-list">컴포넌트5</router-link>
-            <div class = "box">
-                <!-- 테스트 -->
-                <Input></Input>
-            </div>
+            <router-link class="box" style="height:20%;" to="/input">입력</router-link>
         </div>
     </div>
     
