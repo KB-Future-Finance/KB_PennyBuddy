@@ -4,7 +4,7 @@
     <div class="container">
         <h1 class="title"> 소비 기록하기 </h1>
 
-        <form >
+        <form>
             <div class="date">
                 <h2><span class="material-symbols-rounded icon">event_available</span><span class="subTitle"> 거래일자</span></h2>
                 <input class="date-input" :value="formattedDate" readonly>
@@ -40,10 +40,8 @@
                     </div>
 
                     <ul class="list-items" v-show="isDropdownOpen">
-                        <li class="item" v-for="category in categories" :key="category" @click.stop="toggleItemSelection(category)" :class="{ checked: selectedItems.includes(category) }">
-                            <span class="checkbox">
-                                <span class="material-symbols-rounded icon check-icon">check</span>
-                            </span>
+                        <li class="item" v-for="category in categories" :key="category" @click.stop="selectItem(category)" :class="{ checked: selectedItem === category }">
+                            <input type="radio" :value="category" v-model="selectedItem" class="radio"/>
                             <span class="item-text">{{ category }}</span>
                         </li>
                     </ul>
@@ -187,10 +185,12 @@ label {
     width: 1.25em;
     height: 1.25em;
     transition: border 0.1s ease-in-out;
+    margin-right: 0.5em;
+    display:inline-block;
 }
 
 [type="radio"]:checked {
-    border: 0.4em solid #FFC85E;
+    border: 0.4em solid #FFC85E; 
 }
 
 [type="radio"]:hover {
@@ -395,7 +395,7 @@ const formattedDate = computed(() => {
 });
 
 const isDropdownOpen = ref(false);
-const selectedItems = ref([]);
+const selectedItem = ref('');
 const categories = ['식비', '여가비', '교통비'];
 
 const toggleDropdown = (e) => {
@@ -403,18 +403,14 @@ const toggleDropdown = (e) => {
     isDropdownOpen.value = !isDropdownOpen.value;
 };
 
-const toggleItemSelection = (item) => {
-    const index = selectedItems.value.indexOf(item);
-    if (index === -1) {
-        selectedItems.value.push(item);
-    } else {
-        selectedItems.value.splice(index, 1);
-    }
+const selectItem = (item) => {
+    selectedItem.value = item;
+    isDropdownOpen.value = false;
 };
 
 const getButtonText = computed(() => {
-    return selectedItems.value.length > 0
-        ? `${selectedItems.value.length}개 선택되었습니다`
+    return selectedItem.value
+        ? selectedItem.value
         : '카테고리를 선택하세요';
 });
 
@@ -454,4 +450,3 @@ const onBlur = (event) => {
     event.target.value = formattedAmount.value;
 };
 </script>
-
