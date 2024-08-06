@@ -19,11 +19,11 @@
                 <h2><span class="material-symbols-rounded icon">view_cozy</span><span class="subTitle"> 분류</span></h2>
                 <div class="class-input">
                     <label for="income" class="radio">
-                        <input type="radio" name="category_type" id="income" class="hidden"/>
+                        <input type="radio" name="category_type" id="income"/>
                         <span class="label"> 수입</span>
                     </label>
                     <label for="outcome" class="radio">
-                        <input type="radio" name="category_type" id="outcome" class="hidden"/>
+                        <input type="radio" name="category_type" id="outcome"/>
                         <span class="label"> 지출</span>
                     </label>
                 </div>
@@ -190,7 +190,7 @@ label {
 }
 
 [type="radio"]:checked {
-    border: 0.4em solid FFC85E;
+    border: 0.4em solid #FFC85E;
 }
 
 [type="radio"]:hover {
