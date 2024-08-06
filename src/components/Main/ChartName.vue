@@ -1,6 +1,6 @@
 <template>
     <div id="app2">
-      <h1>월별 소비 기록</h1>
+      <h1>카테고리별 소비 기록</h1>
       <div class="year-select-container">
         <label for="year-select">년도 선택: </label>
         <select id="year-select" v-model="selectedYear" @change="fetchData">
@@ -9,26 +9,6 @@
       </div>
       <div class="chart-container">
         <canvas id="expenseChart"></canvas>
-      </div>
-      <div class="list-container">
-        <div class="list-column">
-          <div v-for="(expense, index) in firstHalfExpenses" :key="index" class="expense-item">
-            <span class="month">{{ expense.month }}월</span>
-            <span class="amount">{{ expense.amount.toLocaleString() }} 원</span>
-            <span class="change" :class="expense.change > 0 ? 'up' : 'down'">
-              {{ expense.change > 0 ? '↑' : expense.change < 0 ? '↓' : '-' }}
-            </span>
-          </div>
-        </div>
-        <div class="list-column">
-          <div v-for="(expense, index) in secondHalfExpenses" :key="index" class="expense-item">
-            <span class="month">{{ expense.month }}월</span>
-            <span class="amount">{{ expense.amount.toLocaleString() }} 원</span>
-            <span class="change" :class="expense.change > 0 ? 'up' : 'down'">
-              {{ expense.change > 0 ? '↑' : expense.change < 0 ? '↓' : '-' }}
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   </template>
@@ -63,7 +43,7 @@
   
         try {
           const response = await axios.get(`/api/record/year?${params.toString()}`);
-          console.log('Year response data:', response.data);
+          console.log('Category response data:', response.data);
           this.years = response.data.haveYears.map(record => record.year); // 응답에서 haveYears 배열 사용
           if (this.years.length > 0) {
             this.selectedYear = this.years[0];
@@ -80,15 +60,15 @@
         params.append('year', this.selectedYear); // selectedYear로 설정
   
         try {
-          const response = await axios.get(`/api/record/chartMonth?${params.toString()}`);
+          const response = await axios.get(`/api/record/chartName?${params.toString()}`);
           console.log('Expense response data:', response.data);
-          this.expenses = response.data.chartMonth.map((item, index, array) => {
+          this.expenses = response.data.chartName.map((item, index, array) => {
             let change = 0;
             if (index > 0) {
               change = item.amount - array[index - 1].amount;
             }
             return {
-              month: item.months,
+              name: item.category_name,
               amount: item.amount,
               change: change
             };
@@ -103,17 +83,21 @@
         if (this.chartInstance) {
           this.chartInstance.destroy(); // 기존 차트가 있으면 파괴
         }
+
+        // 동적으로 색상을 생성
+        const colors = this.expenses.map((_, index) => `hsl(${index * 30}, 100%, 75%)`);
+
         this.chartInstance = new Chart(ctx, {
-          type: 'line',
+          type: 'doughnut',
           data: {
-            labels: this.expenses.map(expense => `${expense.month}월`),
+            labels: this.expenses.map(expense => `${expense.name}`),
             datasets: [
               {
-                label: '월별 소비 금액',
+                label: '카테고리별 소비 금액',
                 data: this.expenses.map(expense => expense.amount),
                 fill: true,
-                backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                borderColor: 'rgba(255, 159, 64, 1)',
+                backgroundColor: colors,
+                borderColor:  colors.map(color => color.replace('75%', '50%')),
                 borderWidth: 1,
               },
             ],
@@ -124,6 +108,11 @@
                 beginAtZero: true,
               },
             },
+            plugins: {
+              legend: {
+                position: 'bottom',
+              }
+            }
           },
         });
       }
@@ -156,12 +145,7 @@
     margin: 0 auto 20px auto;
   }
   
-  .list-container {
-    display: flex;
-    justify-content: space-around;
-    width: 80%;
-    margin: 20px auto;
-  }
+
   
   .list-column {
     width: 48%;
