@@ -12,7 +12,6 @@ import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
     <table class="expense-table">
       <thead>
         <tr>
-          <th class="hidden">인덱스</th>
           <th>날짜</th>
           <th>카테고리</th>
           <th>금액</th>
@@ -22,14 +21,13 @@ import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
       </thead>
       <tbody>
         <tr v-for="record in records" :key="record.record_id">
-          <td class="hidden">{{ record.record_id }}</td>
           <td>{{ formatDate(record.reg_date) }}</td>
           <td>{{ record.category_name }}</td>
           <td :class="amountClass(record.category_type)">{{ formatAmount(record.amount, record.category_type) }}</td>
           <td>{{ record.record_memo }}</td>
           <td>
             <button class="edit-button">수정</button>
-            <button class="delete-button" @click="confirmDelete(record.record_id)">삭제</button>
+            <button class="delete-button">삭제</button>
           </td>
         </tr>
       </tbody>
@@ -251,43 +249,7 @@ export default {
     },
     amountClass(type) {
       return type === '1' ? 'income' : 'expense';
-    },
-    confirmDelete(record_id) {
-      if (confirm("삭제하시겠습니까?")) {
-        this.deleteRecord({ record_id: record_id, member_Id: 1 });
-      }
-    },
-    deleteRecord(deleteData={}) {
-      const {
-        record_id,
-        member_Id
-      } = deleteData;
-
-      const params = new URLSearchParams();
-      if (record_id) params.append('record_id', record_id);
-      if (member_Id) params.append('member_Id', member_Id);
-
-      axios.get(`/api/record/delete`, {
-        params: {
-          record_id: record_id,
-          member_Id: member_Id
-        }
-      })
-      .then(response => {
-        console.log('delete success');
-        // 현재 페이지의 데이터가 삭제되었을 때 페이지 이동 처리
-        if (this.records.length === 1 && this.currentPage > 1) {
-          this.currentPage--;
-        }
-        this.fetchRecords(this.filterData);
-      })
-      .catch(error => {
-        console.error("Error fetching delete:", error);
-      });
     }
   }
 };
 </script>
-
-
-
