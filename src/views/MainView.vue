@@ -2,8 +2,11 @@
 import MenuBar from '@/components/common/MenuBarComponent.vue'
 import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
-//테스트코드
 import ExpenseList from '@/components/Main/ExpenseList.vue'
+import TotalMoney from '@/components/Main/TotalMoney.vue'
+import MonthlySpend from '@/components/Main/MonthlySpend.vue'
+import Input from '@/components/Input/InputFormComponent.vue'
+
 </script>
 
 <template>
@@ -15,14 +18,17 @@ import ExpenseList from '@/components/Main/ExpenseList.vue'
             <ChatBot></ChatBot>
         </div>
         <div class = "flex-container">
-            <div class = "box" style="height:20%;">컴포넌트1</div>
-            <div class = "box">컴포넌트2</div>
+            <div class = "box" >
+                <TotalMoney></TotalMoney>
+            </div>
+            <div class = "box">
+                <MonthlySpend></MonthlySpend>
+            </div>
             <div class = "box">컴포넌트3</div>
             <div class = "box">컴포넌트4</div>
             <div class = "box">컴포넌트5</div>
             <div class = "box">컴포넌트5</div>
             <div class = "box">
-                <!-- 테스트 -->
                 <ExpenseList></ExpenseList>
             </div>
         </div>
@@ -71,7 +77,7 @@ import ExpenseList from '@/components/Main/ExpenseList.vue'
         height:80%;
         max-width: 100%;
 
-        border:5px solid red; 
+        /* border:5px solid red;  */
         box-sizing: border-box;
         padding-bottom: 20px;
     }
@@ -87,7 +93,6 @@ import ExpenseList from '@/components/Main/ExpenseList.vue'
         background-color : white;
         
         padding : 20px;
-        box-sizing: border-box;
 
         border-radius : 15px;
         box-shadow: 5px 5px 10px rgb(221, 215, 202);
@@ -98,7 +103,7 @@ import ExpenseList from '@/components/Main/ExpenseList.vue'
 
     .chat{
         flex: 1 1 25%;
-        border: 5px solid yellow;
+        /* border: 5px solid yellow; */
         height : 90vh;
         min-width: 300px;
     }
