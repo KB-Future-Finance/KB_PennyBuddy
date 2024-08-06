@@ -1,0 +1,102 @@
+.container {
+  padding: 20px;
+  background-color: white; /* 전체 페이지 배경을 하얀색으로 설정 */
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.filter-table td {
+  padding: 10px;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+}
+
+input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.expense-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.expense-table th, .expense-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.expense-table th {
+  background-color: #f2f2f2;
+}
+
+.total-amount {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.income {
+  color: blue;
+  margin-right: 20px;
+}
+
+.expense {
+  color: red;
+}
+
+.edit-button, .delete-button {
+  background-color: #f08d8d;
+  border: none;
+  padding: 5px 10px;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.pagination button.active {
+  background-color: #f08d8d;
+  color: white;
+}
+
+/* 추가된 스타일 */
+button {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
+
+.hidden {
+  display: none;
+}
