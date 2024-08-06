@@ -6,7 +6,7 @@
 
     <p class="money">
       <span class="material-symbols-rounded icon">paid</span>
-      <span class="moneyText">102,938 원</span>
+      <span class="moneyText">{{ formattedAmount }} 원</span>
     </p>
   </div>
 </template>
@@ -18,39 +18,31 @@ export default {
   name: 'ExpenseList',
   data() {
     return {
-      totalIncome: 0,  // 총 수입
-      totalExpense: 0  // 총 지출
+      amount: 0
     };
+  },
+  computed: {
+    formattedAmount() {
+      return new Intl.NumberFormat('ko-KR').format(this.amount);
+    }
   },
   created() {
     this.fetchTotalAmount();
   },
   methods: {
     async fetchTotalAmount() {
-      const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-      const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-
       const params = new URLSearchParams();
-      params.append('startDate', startDate.toISOString().split('T')[0]);
-      params.append('endDate', endDate.toISOString().split('T')[0]);
       params.append('member_Id', 1);
-
       try {
-        const response = await axios.get(`/api/record/totalAmount?${params.toString()}`);
-        this.totalIncome = response.data.totalIncome;
-        this.totalExpense = response.data.totalExpense;
+        const response = await axios.get(`/api/record/resultAmount?${params.toString()}`);
+        this.amount = response.data.amount.amount;
       } catch (error) {
         console.error(error);
       }
-    },
-    formatAmount(amount, type) {
-      let formattedAmount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      return type === '1' ? `+${formattedAmount}원` : `-${formattedAmount}원`;
     }
   }
 };
 </script>
-
 
 <style scoped>
 .container{
@@ -103,6 +95,3 @@ export default {
   /* border: 1px solid red; */
 }
 </style>
-
-
-
