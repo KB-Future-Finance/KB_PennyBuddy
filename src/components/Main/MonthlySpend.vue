@@ -38,7 +38,7 @@
         const params = new URLSearchParams();
         params.append('startDate', startDate.toISOString().split('T')[0]);
         params.append('endDate', endDate.toISOString().split('T')[0]);
-        params.append('member_Id', 1);
+        params.append('memberId', 1);
   
         try {
           const response = await axios.get(`/api/record/totalAmount?${params.toString()}`);

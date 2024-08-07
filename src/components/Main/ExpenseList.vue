@@ -14,10 +14,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="record in records" :key="record.record_id">
-          <td>{{ formatDate(record.reg_date) }}</td>
-          <td :class="amountClass(record.category_type)">{{ formatAmount(record.amount, record.category_type) }}</td>
-          <td>{{ record.record_memo }}</td>
+        <tr v-for="record in records" :key="record.recordIdx">
+          <td>{{ formatDate(record.regDate) }}</td>
+          <td :class="amountClass(record.categoryType)">{{ formatAmount(record.amount, record.categoryType) }}</td>
+          <td>{{ record.recordMemo }}</td>
         </tr>
       </tbody>
     </table>
@@ -86,7 +86,7 @@ export default {
       params.append('endDate', new Date(endDate).toISOString().split('T')[0]);
       params.append('page', page);
       params.append('size', 12); // 화면당 보여주는 개수 
-      params.append('member_Id', 1);
+      params.append('memberId', 1);
 
       axios.get(`/api/record/list?${params.toString()}`)
         .then(response => {
