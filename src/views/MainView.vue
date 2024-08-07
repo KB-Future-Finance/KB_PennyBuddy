@@ -5,6 +5,7 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 import ExpenseList from '@/components/Main/ExpenseList.vue'
 import TotalMoney from '@/components/Main/TotalMoney.vue'
 import MonthlySpend from '@/components/Main/MonthlySpend.vue'
+import InputFormComponent from '@/components/Input/InputFormComponent.vue'
 
 
 </script>
@@ -24,10 +25,10 @@ import MonthlySpend from '@/components/Main/MonthlySpend.vue'
             <div class = "box">
                 <MonthlySpend></MonthlySpend>
             </div>
-            <div class = "box">컴포넌트3</div>
+            <div class = "box"><InputFormComponent></InputFormComponent>></div>
             <div class = "box">컴포넌트4</div>
             <div class = "box">
-                <router-link to="/input" class="nav-link">입력</router-link>
+                <router-link to="/expense-list" class="nav-link">리스트</router-link>
             </div>
             
             <div class = "box">

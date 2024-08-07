@@ -3,7 +3,8 @@ import TitleView from '../views/IntroView.vue'
 import ExpenseList from '../components/ExpenseList/ExpenseList.vue';
 import ChartMonth from '@/components/Chart/ChartMonth.vue';
 import ChartName from '@/components/Chart/ChartName.vue';
-import input from '@/components/Input/InputFormComponent.vue'
+import DetailComponent from '@/components/ExpenseList/DetailComponent.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -37,11 +38,10 @@ const router = createRouter({
       name: 'chartName',
       component: ChartName
     },
-    {
-      path: '/input',
-      name: 'input',
-      component: input
-    }
+    { path: '/detail/:record_id/:member_Id', 
+      component: DetailComponent, 
+      name: 'Detail' }
+    
   ]
 })
 
