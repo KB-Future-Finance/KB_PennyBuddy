@@ -1,9 +1,9 @@
 <template>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    
-  <div class="container">
-    <h1 class="title"> 월별 소비 기록 </h1>
-    
+  
+  <h1 class="title"> 월별 소비 기록 </h1>
+  
+  <div class="container">  
     <!-- 연도 선택 -->
     <div class="year-selection">
       <button @click="decrementYear"><span class="material-symbols-rounded icon">arrow_back_ios</span></button>
@@ -151,6 +151,9 @@ export default {
               beginAtZero: false,
             },
           },
+          responsive: true,
+          maintainAspectRatio: false,
+          aspectRatio: 1.2
         },
       });
     }
@@ -164,11 +167,11 @@ export default {
 <style scoped>
 .container {
   width: 100%;
-  height: fit-content;
+  height: 90%;
 
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: space-between;
 
   padding: 0px;
 
@@ -193,25 +196,26 @@ export default {
 
 .chart-container {
   width: 100%;
-  margin: 0 auto 20px auto;
+  /* border: 1px solid red; */
 }
 
 .list-container {
   display: flex;
+  gap: 30px;
   justify-content: space-around;
 
   font-size: 14px;
 }
 
 .list-column {
-  width: 48%;
+  width: 45%;
 }
 
 .expense-item {
   display: flex;
   justify-content: space-between;
   border-radius: 0px;
-  padding: 0;
+  padding: 8px 0px;
   background-color: white;
   box-shadow: none;
 
@@ -225,8 +229,12 @@ export default {
 }
 
 .expense-item .month {
-  font-weight: bold;
-  color: #ff9f40;
+  font-weight: 600;
+  color: #ff8e1d;
+
+  background-color: #fdf1df;
+  border-radius: 10px;
+  padding: 2px;
 }
 
 .expense-item .amount {
@@ -249,20 +257,6 @@ export default {
 .year-selection {
   display: flex;
   justify-content: center;
-  margin-bottom:10px;
-}
-
-.year-selection > span {
-  font-size: 16px;
-  font-weight: 700;
-  text-align: center;
-
-  background-color: #fde5c1;
-  border-radius: 100px;
-
-  margin: 0px 10px;
-
-  width: 100px;
 }
 
 .year-selection button {
@@ -271,6 +265,32 @@ export default {
 }
 
 button .icon {
+  color:#ffaa29;
   font-size: 14px;
+  font-size: 14px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+button .icon:hover {
+  color:#ffffff;
+  font-size: 14px;
+  background-color: #ffaa29;
+  padding: 5px;
+  border-radius: 100px;
+}
+
+.year-selection > span {
+  color:#ffaa29;
+  font-size: 17px;
+  font-weight: 500;
+  text-align: center;
+
+  background-color: #fdf1df;
+  border-radius: 100px;
+
+  margin: 0px 10px;
+
+  width: 100px;
 }
 </style>
