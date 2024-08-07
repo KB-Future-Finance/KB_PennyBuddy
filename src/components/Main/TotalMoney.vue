@@ -76,7 +76,7 @@ export default {
 }
 
 .money{
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;  
   /* border: 1px solid blue; */
 }

@@ -90,8 +90,8 @@
   
   .money{
     display: flex;
-    gap: 7%;
-    font-size: 20px;
+    gap: 5%;
+    font-size: 18px;
     font-weight: 600;  
     /* border: 1px solid blue; */
   }
