@@ -40,7 +40,7 @@ const router = createRouter({
       name: 'chartName',
       component: ChartName
     },
-    { path: '/detail/:record_id/:member_Id', 
+    { path: '/detail/:recordIdx/:memberId', 
       component: DetailComponent, 
       name: 'Detail' }
     

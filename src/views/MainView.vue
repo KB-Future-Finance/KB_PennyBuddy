@@ -7,6 +7,7 @@ import TotalMoney from '@/components/Main/TotalMoney.vue'
 import MonthlySpend from '@/components/Main/MonthlySpend.vue'
 import InputFormComponent from '@/components/Input/InputFormComponent.vue'
 import MonthlyChart from '@/components/Main/ChartMonth.vue'
+import ChartName from '@/components/Main/ChartName.vue'
 
 </script>
 
@@ -28,7 +29,9 @@ import MonthlyChart from '@/components/Main/ChartMonth.vue'
             <div class = "box">컴포넌트3</div>
             <div class = "box">컴포넌트4</div>
 
-            <div class = "box">컴포넌트5</div>
+            <div class = "box">
+                <ChartName></ChartName>
+            </div>
             <div class = "box">
                 <MonthlyChart></MonthlyChart>
             </div>

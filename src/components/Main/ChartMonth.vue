@@ -64,7 +64,7 @@ export default {
   methods: {
     async fetchYears() {
       const params = new URLSearchParams();
-      params.append('member_Id', '1'); // member_Id로 설정
+      params.append('memberId', '1'); // member_Id로 설정
   
       try {
         const response = await axios.get(`/api/record/year?${params.toString()}`);
@@ -83,7 +83,7 @@ export default {
     async fetchData() {
       // console.log("Selected year: ", this.selectedYear); // 현재 선택한 년도 로그 출력
       const params = new URLSearchParams();
-      params.append('member_Id', '1'); // member_Id로 설정
+      params.append('memberId', '1'); // member_Id로 설정
       params.append('year', this.selectedYear); // selectedYear로 설정
   
       try {

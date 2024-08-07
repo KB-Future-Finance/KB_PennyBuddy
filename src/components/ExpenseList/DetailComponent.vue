@@ -6,7 +6,7 @@
       <div class="date">
         <h2><span class="material-symbols-rounded icon">event_available</span><span class="subTitle"> 거래일자</span></h2>
         <input class="date-input" :value="formattedDate" readonly>
-        <VDatePicker v-model="reg_date" :masks="masks" :disabled="isReadOnly">
+        <VDatePicker v-model="regDate" :masks="masks" :disabled="isReadOnly">
           <template #default="{ togglePopover }">
             <button type="button" class="button" @click="togglePopover" style="margin-left:10px;" :disabled="isReadOnly">선택</button>
           </template>
@@ -16,11 +16,11 @@
         <h2><span class="material-symbols-rounded icon">view_cozy</span><span class="subTitle"> 분류</span></h2>
         <div class="class-input">
           <label for="income" class="radio">
-            <input type="radio" name="category_type" id="income" value="1" v-model="category_type" @change="handleCategoryChange" :disabled="isReadOnly"/>
+            <input type="radio" name="categoryType" id="income" value="1" v-model="categoryType" @change="handleCategoryChange" :disabled="isReadOnly"/>
             <span class="label"> 수입</span>
           </label>
           <label for="outcome" class="radio">
-            <input type="radio" name="category_type" id="outcome" value="2" v-model="category_type" @change="handleCategoryChange" :disabled="isReadOnly"/>
+            <input type="radio" name="categoryType" id="outcome" value="2" v-model="categoryType" @change="handleCategoryChange" :disabled="isReadOnly"/>
             <span class="label"> 지출</span>
           </label>
         </div>
@@ -35,9 +35,9 @@
             </span>
           </div>
           <ul class="list-items" v-show="isDropdownOpen">
-            <li class="item" v-for="category in filteredCategories" :key="category.category_id" @click.stop="selectItem(category)" :class="{ checked: selectedItem === category.category_id }">
-              <input type="radio" :value="category.category_id" v-model="selectedItem" class="radio" :disabled="isReadOnly"/>
-              <span class="item-text">{{ category.category_name }}</span>
+            <li class="item" v-for="category in filteredCategories" :key="category.categoryIdx" @click.stop="selectItem(category)" :class="{ checked: selectedItem === category.categoryIdx }">
+              <input type="radio" :value="category.categoryIdx" v-model="selectedItem" class="radio" :disabled="isReadOnly"/>
+              <span class="item-text">{{ category.categoryName }}</span>
             </li>
           </ul>
         </div>
@@ -48,11 +48,11 @@
       </div>
       <div class="memo">
         <h2><span class="material-symbols-rounded icon">sell</span><span class="subTitle"> 내역</span></h2>
-        <input type="text" v-model="record_memo" class="memo-input" placeholder="내역을 입력하세요" :readonly="isReadOnly">
+        <input type="text" v-model="recordMemo" class="memo-input" placeholder="내역을 입력하세요" :readonly="isReadOnly">
       </div>
       <div class="detail">
         <h2><span class="material-symbols-rounded icon">data_info_alert</span><span class="subTitle"> 메모</span></h2>
-        <textarea v-model="record_details" class="detail-input" placeholder="메모를 입력하세요" :readonly="isReadOnly"></textarea>
+        <textarea v-model="recordDetails" class="detail-input" placeholder="메모를 입력하세요" :readonly="isReadOnly"></textarea>
       </div>
       <div class="enter">
         <button type="button" class="button" @click="toggleEdit">{{ isEditing ? '확인' : '수정' }}</button>
@@ -67,16 +67,16 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router'; // Vue Router 사용
 import axios from 'axios';
 
-const reg_date = ref(new Date());
+const regDate = ref(new Date());
 const masks = { input: 'YYYY-MM-DD' };
 const amount = ref('');
-const category_type = ref('1'); // 초기 '수입' 선택
+const categoryType = ref('1'); // 초기 '수입' 선택
 const categories = ref([]);
 const filteredCategories = ref([]); // 필터링된 카테고리
 const selectedItem = ref('');
 const isDropdownOpen = ref(false);
-const record_memo = ref('');
-const record_details = ref('');
+const recordMemo = ref('');
+const recordDetails = ref('');
 const route = useRoute(); // 라우트 정보 가져오기
 const router = useRouter(); // Vue Router 사용
 let initialLoad = true; // 처음 로딩 여부를 확인하기 위한 변수
@@ -85,7 +85,7 @@ const isReadOnly = ref(true); // 처음에는 ReadOnly 상태
 const isEditing = ref(false); // 수정 모드인지 확인
 
 const formattedDate = computed(() => {
-  return reg_date.value ? reg_date.value.toISOString().split('T')[0] : '';
+  return regDate.value ? regDate.value.toISOString().split('T')[0] : '';
 });
 
 const toggleDropdown = (e) => {
@@ -96,14 +96,14 @@ const toggleDropdown = (e) => {
 };
 
 const selectItem = (item) => {
-  selectedItem.value = item.category_id;
+  selectedItem.value = item.categoryIdx;
   isDropdownOpen.value = false;
 };
 
 const getButtonText = computed(() => {
   if (!selectedItem.value) return '카테고리를 선택하세요';
-  const category = categories.value.find(category => category.category_id === selectedItem.value);
-  return category ? category.category_name : '카테고리를 선택하세요';
+  const category = categories.value.find(category => category.categoryIdx === selectedItem.value);
+  return category ? category.categoryName : '카테고리를 선택하세요';
 });
 
 const handleCategoryChange = () => {
@@ -116,7 +116,8 @@ const handleCategoryChange = () => {
 const fetchCategories = async () => {
   try {
     const response = await axios.get(`/api/category/list`);
-    categories.value = response.data.categories;
+    categories.value = response.data.categories || [];
+    
     filterCategories(); // 카테고리 필터링
   } catch (error) {
     console.error("Failed to fetch categories", error);
@@ -124,35 +125,36 @@ const fetchCategories = async () => {
 };
 
 const filterCategories = () => {
-  if (category_type.value === '1') { // 수입
-    filteredCategories.value = categories.value.filter(category => category.category_type === '1');
-  } else if (category_type.value === '2') { // 지출
-    filteredCategories.value = categories.value.filter(category => category.category_type === '2');
+  const type = categoryType.value || '1'; // 기본값 설정
+  if (type === '1') { // 수입
+    filteredCategories.value = categories.value.filter(category => category.categoryType === '1');
+  } else if (type === '2') { // 지출
+    filteredCategories.value = categories.value.filter(category => category.categoryType === '2');
   } else { // 전체
     filteredCategories.value = categories.value;
   }
 };
 
 const fetchRecordDetails = async () => {
-  const record_id = route.params.record_id;
-  const member_Id = route.params.member_Id;
+  const recordIdx = route.params.recordIdx;
+  const memberId = route.params.memberId;
   try {
     const response = await axios.get(`/api/record/detail`, {
-      params: { record_id, member_Id }
+      params: { recordIdx, memberId }
     });
     const record = response.data.detail;
     console.log("Fetched record details:", record); // 데이터를 콘솔에 출력
 
-    if (record.reg_date) {
-      reg_date.value = new Date(record.reg_date);
+    if (record.regDate) {
+      regDate.value = new Date(record.regDate);
     } else {
-      reg_date.value = null; // 유효하지 않은 날짜 값을 처리하기 위해 null로 설정
+      regDate.value = null; // 유효하지 않은 날짜 값을 처리하기 위해 null로 설정
     }
-    amount.value = record.amount;
-    category_type.value = record.category_type;
-    selectedItem.value = record.category_Id; // 수정된 부분
-    record_memo.value = record.record_memo;
-    record_details.value = record.record_details;
+    amount.value = record.amount || '';
+    categoryType.value = record.categoryType || '1'; // 기본값 설정
+    selectedItem.value = record.categoryIdx || ''; // 수정된 부분
+    recordMemo.value = record.recordMemo || '';
+    recordDetails.value = record.recordDetails || '';
     await fetchCategories(); // 카테고리 가져오기
     initialLoad = false; // 데이터 로딩이 완료되면 false로 설정
     filterCategories(); // 데이터 로딩 후 카테고리 필터링
@@ -178,11 +180,11 @@ const handleSubmit = async () => {
   if (isReadOnly.value) return;
 
   // 유효성 검사
-  if (!reg_date.value) {
+  if (!regDate.value) {
     alert("거래일자를 선택하세요.");
     return;
   }
-  if (!category_type.value) {
+  if (!categoryType.value) {
     alert("분류를 선택하세요.");
     return;
   }
@@ -194,11 +196,11 @@ const handleSubmit = async () => {
     alert("금액을 입력하세요.");
     return;
   }
-  if (!record_memo.value) {
+  if (!recordMemo.value) {
     alert("내역을 입력하세요.");
     return;
   }
-  if (!record_details.value) {
+  if (!recordDetails.value) {
     alert("메모를 입력하세요.");
     return;
   }
@@ -207,7 +209,7 @@ const handleSubmit = async () => {
   if (!confirmUpdate) return;
 
   // 선택된 카테고리 객체 찾기
-  const selectedCategory = categories.value.find(category => category.category_id === selectedItem.value);
+  const selectedCategory = categories.value.find(category => category.categoryIdx === selectedItem.value);
   if (!selectedCategory) {
     alert("선택된 카테고리가 유효하지 않습니다.");
     return;
@@ -215,14 +217,14 @@ const handleSubmit = async () => {
 
   // 데이터 전송
   const params = new URLSearchParams({
-    member_Id: route.params.member_Id,
-    reg_date: formattedDate.value,
+    memberId: route.params.memberId,
+    regDate: formattedDate.value,
     amount: amount.value,
-    category_type: category_type.value,
-    category_Id: selectedCategory.category_id,
-    record_memo: record_memo.value,
-    record_details: record_details.value,
-    record_id: route.params.record_id
+    categoryType: categoryType.value,
+    categoryIdx: selectedCategory.categoryIdx,
+    recordMemo: recordMemo.value,
+    recordDetails: recordDetails.value,
+    recordIdx: route.params.recordIdx
   });
 
   console.log("Sending request with params:", params.toString());
@@ -251,6 +253,7 @@ const handleClickOutside = (event) => {
   }
 };
 </script>
+
 
 <style scoped>
 .container {
