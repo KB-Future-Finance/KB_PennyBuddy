@@ -1,7 +1,3 @@
-<script setup>
-import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
-</script>
-
 <template>
   <div class="container">
     <div>
@@ -28,7 +24,7 @@ import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
           <td :class="amountClass(record.category_type)">{{ formatAmount(record.amount, record.category_type) }}</td>
           <td>{{ record.record_memo }}</td>
           <td>
-            <button class="edit-button">수정</button>
+            <button class="edit-button" @click="getDetail(record.record_id)">상세</button>
             <button class="delete-button" @click="confirmDelete(record.record_id)">삭제</button>
           </td>
         </tr>
@@ -56,6 +52,7 @@ import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
 import axios from 'axios';
 import 'v-calendar/dist/style.css';
 import { setupCalendar, DatePicker } from 'v-calendar';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'ExpenseList',
@@ -134,6 +131,7 @@ export default {
 
       axios.get(`/api/record/list?${params.toString()}`)
         .then(response => {
+          console.log("API response:", response.data);
           this.records = response.data.records;
           this.totalPages = response.data.totalPages;
           this.currentPage = response.data.currentPage;
@@ -283,6 +281,11 @@ export default {
       .catch(error => {
         console.error("Error fetching delete:", error);
       });
+    },
+    getDetail(record_id) {
+      const member_Id = 1; // 실제 사용 시, 현재 로그인된 사용자의 ID로 변경
+      console.log("Record ID:", record_id);
+      this.$router.push({ name: 'Detail', params: { record_id ,member_Id} });
     }
   }
 };
@@ -389,6 +392,3 @@ button:hover {
 }
 
 </style>
-
-
-
