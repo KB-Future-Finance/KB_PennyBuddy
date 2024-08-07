@@ -1,7 +1,7 @@
 <template>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-  <div class="container">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<div class="flex-container">
+  <div class="container" >
     <h1 class="title"> 이번 달 소비 기록 </h1>
 
     <!-- 기록 목록 테이블 -->
@@ -31,6 +31,17 @@
       <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
     </div>
   </div>
+  
+  <div class="buttonFlex">
+    <div class="toList">
+      <RouterLink to="/expense-list" class="text">추가하기</RouterLink>
+    </div>
+    <div class="toList">
+      <RouterLink to="/expense-list" class="text">상세 리스트 보기</RouterLink>
+    </div>
+  </div>
+  
+</div>
 </template>
 
 <script>
@@ -146,6 +157,14 @@ export default {
 </script>
 
 <style scoped>
+.flex-container{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: end;
+  /* border:1px solid red; */
+}
 .container{
     width:100%;
     height:100%;
@@ -229,6 +248,31 @@ button {
 
 button:hover {
   background-color: #e0e0e0;
+}
+
+.buttonFlex{
+  display: flex;
+  gap : 10px;
+}
+
+.toList{
+  width: fit-content;
+  text-decoration: none;
+  
+  padding:5px 10px;
+  border-radius: 10px;
+
+  border:2px solid #ffaa3a;
+}
+
+.toList .text{
+  text-decoration: none;
+  color:#ffaa3a;
+  font-weight: 600;
+}
+
+.toList:hover{
+  background-color: #fff7d5;
 }
 </style>
 

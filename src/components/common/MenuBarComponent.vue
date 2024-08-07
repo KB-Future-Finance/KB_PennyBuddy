@@ -4,7 +4,7 @@
     <nav>
         <span class="material-symbols-rounded icon" @click="refreshPage">sync</span>
         <RouterLink to="/style"><span class="material-symbols-rounded icon">checkroom</span></RouterLink>
-        <span class="material-symbols-rounded icon">dark_mode</span>
+        <RouterLink to="/main"><span class="material-symbols-rounded icon">home</span></RouterLink>
         <RouterLink to="/"><span class="material-symbols-rounded icon">logout</span></RouterLink>
     </nav>
 </template>
