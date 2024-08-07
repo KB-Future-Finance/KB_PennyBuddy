@@ -8,6 +8,7 @@ import MonthlySpend from '@/components/Main/MonthlySpend.vue'
 import CategoryChart from '@/components/Main/ChartName.vue'
 import InputFormComponent from '@/components/Input/InputFormComponent.vue'
 import MonthlyChart from '@/components/Main/ChartMonth.vue'
+import ChartName from '@/components/Main/ChartName.vue'
 
 </script>
 

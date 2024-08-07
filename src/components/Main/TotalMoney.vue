@@ -32,7 +32,7 @@ export default {
   methods: {
     async fetchTotalAmount() {
       const params = new URLSearchParams();
-      params.append('member_Id', 1);
+      params.append('memberId', 1);
       try {
         const response = await axios.get(`/api/record/resultAmount?${params.toString()}`);
         this.amount = response.data.amount.amount;

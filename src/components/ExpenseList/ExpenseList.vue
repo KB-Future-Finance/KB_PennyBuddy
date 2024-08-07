@@ -1,3 +1,4 @@
+
 <template>
   <div class="container">
     <div>
@@ -17,15 +18,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="record in records" :key="record.record_id">
-          <td class="hidden">{{ record.record_id }}</td>
-          <td>{{ formatDate(record.reg_date) }}</td>
-          <td>{{ record.category_name }}</td>
-          <td :class="amountClass(record.category_type)">{{ formatAmount(record.amount, record.category_type) }}</td>
-          <td>{{ record.record_memo }}</td>
+        <tr v-for="record in records" :key="record.recordIdx">
+          <td class="hidden">{{ record.recordIdx }}</td>
+          <td>{{ formatDate(record.regDate) }}</td>
+          <td>{{ record.categoryName }}</td>
+          <td :class="amountClass(record.categoryType)">{{ formatAmount(record.amount, record.categoryType) }}</td>
+          <td>{{ record.recordMemo }}</td>
           <td>
-            <button class="edit-button" @click="getDetail(record.record_id)">상세</button>
-            <button class="delete-button" @click="confirmDelete(record.record_id)">삭제</button>
+            <button class="edit-button" @click="getDetail(record.recordIdx)">상세</button>
+            <button class="delete-button" @click="confirmDelete(record.recordIdx)">삭제</button>
           </td>
         </tr>
       </tbody>
@@ -53,11 +54,12 @@ import axios from 'axios';
 import 'v-calendar/dist/style.css';
 import { setupCalendar, DatePicker } from 'v-calendar';
 import { useRouter } from 'vue-router';
-
+import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
 export default {
   name: 'ExpenseList',
   components: {
     DatePicker,
+    FilterComponent
   },
   data() {
     return {
@@ -111,7 +113,7 @@ export default {
       const {
         startDate = this.dateRange.start,
         endDate = this.dateRange.end,
-        category_type = this.category_type || null,
+        categoryType = this.categoryType || null,
         categories = (this.categories && this.categories.length > 0) ? this.categories : null, // 빈 배열 대신 null을 전달
         page = this.currentPage
       } = filterData;
@@ -119,7 +121,7 @@ export default {
       const params = new URLSearchParams();
       if (startDate) params.append('startDate', new Date(startDate).toISOString().split('T')[0]); // ISO 형식으로 변환
       if (endDate) params.append('endDate', new Date(endDate).toISOString().split('T')[0]); // ISO 형식으로 변환
-      if (category_type) params.append('category_type', category_type);
+      if (categoryType) params.append('categoryType', categoryType);
       if (categories) {
         categories.forEach(category => params.append('categories', category)); // 수정된 부분
       } else {
@@ -127,7 +129,7 @@ export default {
       }
       params.append('page', page);
       params.append('size', 5); // 화면당 보여주는 개수 
-      params.append('member_Id', 1);
+      params.append('memberId', 1);
 
       axios.get(`/api/record/list?${params.toString()}`)
         .then(response => {
@@ -148,20 +150,20 @@ export default {
       const {
         startDate = this.dateRange.start,
         endDate = this.dateRange.end,
-        category_type = this.category_type || null,
+        categoryType = this.categoryType || null,
         categories = (this.categories && this.categories.length > 0) ? this.categories : null
       } = filterData;
 
       const params = new URLSearchParams();
       if (startDate) params.append('startDate', new Date(startDate).toISOString().split('T')[0]);
       if (endDate) params.append('endDate', new Date(endDate).toISOString().split('T')[0]);
-      if (category_type) params.append('category_type', category_type);
+      if (categoryType) params.append('categoryType', categoryType);
       if (categories) {
         categories.forEach(category => params.append('categories', category));
       } else {
         params.append('categories', '');
       }
-      params.append('member_Id', 1);
+      params.append('memberId', 1);
 
       try {
         const response = await axios.get(`/api/record/totalAmount?${params.toString()}`);
@@ -175,7 +177,7 @@ export default {
       const params = new URLSearchParams();
       if (this.dateRange.start) params.append('startDate', new Date(this.dateRange.start).toISOString().split('T')[0]); // ISO 형식으로 변환
       if (this.dateRange.end) params.append('endDate', new Date(this.dateRange.end).toISOString().split('T')[0]); // ISO 형식으로 변환
-      params.append('member_Id', 1);
+      params.append('memberId', 1);
 
       axios.get(`/api/record/category?${params.toString()}`)
         .then(response => {
@@ -188,9 +190,9 @@ export default {
     },
     filterCategories() {
       if (this.type === '1') { // 수입
-        this.filteredCategories = this.allCategories.filter(category => category.category_type === '1');
+        this.filteredCategories = this.allCategories.filter(category => category.categoryType === '1');
       } else if (this.type === '2') { // 지출
-        this.filteredCategories = this.allCategories.filter(category => category.category_type === '2');
+        this.filteredCategories = this.allCategories.filter(category => category.categoryType === '2');
       } else { // 전체
         this.filteredCategories = [];
       }
@@ -249,25 +251,25 @@ export default {
     amountClass(type) {
       return type === '1' ? 'income' : 'expense';
     },
-    confirmDelete(record_id) {
+    confirmDelete(recordIdx) {
       if (confirm("삭제하시겠습니까?")) {
-        this.deleteRecord({ record_id: record_id, member_Id: 1 });
+        this.deleteRecord({ recordIdx: recordIdx, memberId: 1 });
       }
     },
     deleteRecord(deleteData={}) {
       const {
-        record_id,
-        member_Id
+        recordIdx,
+        memberId
       } = deleteData;
 
       const params = new URLSearchParams();
-      if (record_id) params.append('record_id', record_id);
-      if (member_Id) params.append('member_Id', member_Id);
+      if (recordIdx) params.append('recordIdx', recordIdx);
+      if (memberId) params.append('memberId', memberId);
 
       axios.get(`/api/record/delete`, {
         params: {
-          record_id: record_id,
-          member_Id: member_Id
+          recordIdx: recordIdx,
+          memberId: memberId
         }
       })
       .then(response => {
@@ -282,10 +284,10 @@ export default {
         console.error("Error fetching delete:", error);
       });
     },
-    getDetail(record_id) {
-      const member_Id = 1; // 실제 사용 시, 현재 로그인된 사용자의 ID로 변경
-      console.log("Record ID:", record_id);
-      this.$router.push({ name: 'Detail', params: { record_id ,member_Id} });
+    getDetail(recordIdx) {
+      const memberId = 1; // 실제 사용 시, 현재 로그인된 사용자의 ID로 변경
+      console.log("Record ID:", recordIdx);
+      this.$router.push({ name: 'Detail', params: { recordIdx ,memberId} });
     }
   }
 };

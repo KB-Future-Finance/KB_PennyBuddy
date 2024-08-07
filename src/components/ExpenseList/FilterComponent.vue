@@ -20,11 +20,11 @@
         <tr>
           <td>분류</td>
           <td>
-            <input type="radio" id="all" value="" v-model="category_type" @change="filterCategories" />
+            <input type="radio" id="all" value="" v-model="categoryType" @change="filterCategories" />
             <label for="all">전체</label>
-            <input type="radio" id="income" value="1" v-model="category_type" @change="filterCategories" />
+            <input type="radio" id="income" value="1" v-model="categoryType" @change="filterCategories" />
             <label for="income">수입</label>
-            <input type="radio" id="expense" value="2" v-model="category_type" @change="filterCategories" />
+            <input type="radio" id="expense" value="2" v-model="categoryType" @change="filterCategories" />
             <label for="expense">지출</label>
           </td>
         </tr>
@@ -32,8 +32,8 @@
           <td>카테고리</td>
           <td>
             <div class="checkbox-container">
-              <div v-for="category in filteredCategories" :key="category.category_id" class="checkbox-item">
-                <input type="checkbox" :value="category.category_id" v-model="categories" />
+              <div v-for="category in filteredCategories" :key="category.categoryIdx" class="checkbox-item">
+                <input type="checkbox" :value="category.categoryIdx" v-model="categories" />
                 <label>{{ category.category_name }}</label>
               </div>
             </div>
@@ -59,7 +59,7 @@ export default {
         start: '',
         end: ''
       },
-      category_type: '', // type을 category_type으로 변경
+      categoryType: '', // type을 categoryType 변경
       categories: [],
       filteredCategories: [],
       allCategories: []
@@ -70,7 +70,7 @@ export default {
       const filterData = {
         startDate: this.dateRange.start,
         endDate: this.dateRange.end,
-        category_type: this.category_type, // type을 category_type으로 변경
+        categoryType: this.categoryType, // type을 category_type으로 변경
         categories: this.categories.slice() // 배열의 실제 복사본 전달
       };
 
@@ -82,7 +82,7 @@ export default {
       const params = new URLSearchParams();
       if (this.dateRange.start) params.append('startDate', this.dateRange.start);
       if (this.dateRange.end) params.append('endDate', this.dateRange.end);
-      params.append('member_Id', 1);
+      params.append('memberId', 1);
 
       try {
         const response = await axios.get(`/api/record/category?${params.toString()}`);
@@ -93,10 +93,10 @@ export default {
       }
     },
     filterCategories() {
-      if (this.category_type === '1') { // 수입
-        this.filteredCategories = this.allCategories.filter(category => category.category_type === '1');
-      } else if (this.category_type === '2') { // 지출
-        this.filteredCategories = this.allCategories.filter(category => category.category_type === '2');
+      if (this.categoryType === '1') { // 수입
+        this.filteredCategories = this.allCategories.filter(category => category.categoryType === '1');
+      } else if (this.categoryType === '2') { // 지출
+        this.filteredCategories = this.allCategories.filter(category => category.categoryType === '2');
       } else { // 전체
         this.filteredCategories = [];
       }
@@ -104,7 +104,7 @@ export default {
     }
   },
   watch: {
-    category_type() {
+    categoryType() {
       this.filterCategories();
     }
   },
