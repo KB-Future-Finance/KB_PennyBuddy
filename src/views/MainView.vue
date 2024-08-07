@@ -5,6 +5,7 @@ import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 import ExpenseList from '@/components/Main/ExpenseList.vue'
 import TotalMoney from '@/components/Main/TotalMoney.vue'
 import MonthlySpend from '@/components/Main/MonthlySpend.vue'
+import CategoryChart from '@/components/Main/ChartName.vue'
 import InputFormComponent from '@/components/Input/InputFormComponent.vue'
 import MonthlyChart from '@/components/Main/ChartMonth.vue'
 
@@ -25,10 +26,9 @@ import MonthlyChart from '@/components/Main/ChartMonth.vue'
             <div class = "box">
                 <MonthlySpend></MonthlySpend>
             </div>
-            <div class = "box">컴포넌트3</div>
-            <div class = "box">컴포넌트4</div>
-
-            <div class = "box">컴포넌트5</div>
+            <div class = "box">
+                <CategoryChart></CategoryChart>
+            </div>
             <div class = "box">
                 <MonthlyChart></MonthlyChart>
             </div>
