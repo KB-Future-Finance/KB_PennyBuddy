@@ -34,7 +34,7 @@
   
   <div class="buttonFlex">
     <div class="toList">
-      <RouterLink to="/expense-list" class="text">추가하기</RouterLink>
+      <RouterLink to="/inputFormComponent" class="text">추가하기</RouterLink>
     </div>
     <div class="toList">
       <RouterLink to="/expense-list" class="text">상세 리스트 보기</RouterLink>

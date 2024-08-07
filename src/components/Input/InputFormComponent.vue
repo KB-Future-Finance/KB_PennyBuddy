@@ -8,7 +8,7 @@
             <div class="date">
                 <h2><span class="material-symbols-rounded icon">event_available</span><span class="subTitle"> 거래일자</span></h2>
                 <input class="date-input" :value="formattedDate" readonly>
-                <VDatePicker v-model="reg_date" :masks="masks">
+                <VDatePicker v-model="regDate" :masks="masks">
                     <template #default="{ togglePopover }">
                         <button type="button" class="button" @click="togglePopover" style="margin-left:10px;">선택</button>
                     </template>
@@ -19,11 +19,11 @@
                 <h2><span class="material-symbols-rounded icon">view_cozy</span><span class="subTitle"> 분류</span></h2>
                 <div class="class-input">
                     <label for="income" class="radio">
-                        <input type="radio" name="category_type" id="income" value="1" v-model="category_type" @change="handleCategoryChange"/>
+                        <input type="radio" name="categoryType" id="income" value="1" v-model="categoryType" @change="handleCategoryChange"/>
                         <span class="label"> 수입</span>
                     </label>
                     <label for="outcome" class="radio">
-                        <input type="radio" name="category_type" id="outcome" value="2" v-model="category_type" @change="handleCategoryChange"/>
+                        <input type="radio" name="categoryType" id="outcome" value="2" v-model="categoryType" @change="handleCategoryChange"/>
                         <span class="label"> 지출</span>
                     </label>
                 </div>
@@ -40,9 +40,9 @@
                     </div>
 
                     <ul class="list-items" v-show="isDropdownOpen">
-                        <li class="item" v-for="category in filteredCategories" :key="category.category_id" @click.stop="selectItem(category)" :class="{ checked: selectedItem === category.category_id }">
-                            <input type="radio" :value="category.category_id" v-model="selectedItem" class="radio"/>
-                            <span class="item-text">{{ category.category_name }}</span>
+                        <li class="item" v-for="category in filteredCategories" :key="category.categoryIdx" @click.stop="selectItem(category)" :class="{ checked: selectedItem === category.categoryIdx }">
+                            <input type="radio" :value="category.categoryIdx" v-model="selectedItem" class="radio"/>
+                            <span class="item-text">{{ category.categoryName }}</span>
                         </li>
                     </ul>
                 </div>
@@ -55,12 +55,12 @@
 
             <div class="memo">
                 <h2><span class="material-symbols-rounded icon">sell</span><span class="subTitle"> 내역</span></h2>
-                <input type="text" v-model="record_memo" class="memo-input" placeholder="내역을 입력하세요">
+                <input type="text" v-model="recordMemo" class="memo-input" placeholder="내역을 입력하세요">
             </div>
 
             <div class="detail">
                 <h2><span class="material-symbols-rounded icon">data_info_alert</span><span class="subTitle"> 메모</span></h2>
-                <textarea v-model="record_details" class="detail-input" placeholder="메모를 입력하세요"></textarea>
+                <textarea v-model="recordDetails" class="detail-input" placeholder="메모를 입력하세요"></textarea>
             </div>
 
             <div class="enter">
@@ -365,21 +365,21 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
-const reg_date = ref(new Date());
+const regDate = ref(new Date());
 const masks = { input: 'YYYY-MM-DD' };
 const amount = ref('');
-const category_type = ref('1'); // 초기 '수입' 선택
+const categoryType = ref('1'); // 초기 '수입' 선택
 const categories = ref([]);
 const selectedItem = ref('');
 const isDropdownOpen = ref(false);
-const record_memo = ref('');
-const record_details = ref('');
-const member_Id = '1';
+const recordMemo = ref('');
+const recordDetails = ref('');
+const memberId = '1';
 
 const router = useRouter();
 
 const formattedDate = computed(() => {
-    return reg_date.value ? reg_date.value.toISOString().split('T')[0] : '';
+    return regDate.value ? regDate.value.toISOString().split('T')[0] : '';
 });
 
 const toggleDropdown = (e) => {
@@ -388,14 +388,14 @@ const toggleDropdown = (e) => {
 };
 
 const selectItem = (item) => {
-    selectedItem.value = item.category_id;
+    selectedItem.value = item.categoryIdx;
     isDropdownOpen.value = false;
 };
 
 const getButtonText = computed(() => {
     if (!selectedItem.value) return '카테고리를 선택하세요';
-    const category = categories.value.find(category => category.category_id === selectedItem.value);
-    return category ? category.category_name : '카테고리를 선택하세요';
+    const category = categories.value.find(category => category.categoryId === selectedItem.value);
+    return category ? category.categoryName : '카테고리를 선택하세요';
 });
 
 const handleClickOutside = (event) => {
@@ -450,16 +450,16 @@ const fetchCategories = async () => {
 };
 
 const filteredCategories = computed(() => {
-    return categories.value.filter(category => category.category_type === category_type.value);
+    return categories.value.filter(category => category.categoryType === categoryType.value);
 });
 
 const handleSubmit = async () => {
     // 유효성 검사
-    if (!reg_date.value) {
+    if (!regDate.value) {
         alert("거래일자를 선택하세요.");
         return;
     }
-    if (!category_type.value) {
+    if (!categoryType.value) {
         alert("분류를 선택하세요.");
         return;
     }
@@ -471,17 +471,17 @@ const handleSubmit = async () => {
         alert("금액을 입력하세요.");
         return;
     }
-    if (!record_memo.value) {
+    if (!recordMemo.value) {
         alert("내역을 입력하세요.");
         return;
     }
-    if (!record_details.value) {
+    if (!recordDetails.value) {
         alert("메모를 입력하세요.");
         return;
     }
 
     // 선택된 카테고리 객체 찾기
-    const selectedCategory = categories.value.find(category => category.category_id === selectedItem.value);
+    const selectedCategory = categories.value.find(category => category.categoryIdx === selectedItem.value);
     if (!selectedCategory) {
         alert("선택된 카테고리가 유효하지 않습니다.");
         return;
@@ -489,13 +489,13 @@ const handleSubmit = async () => {
 
     // 데이터 전송
     const params = new URLSearchParams({
-        member_Id,
-        reg_date: formattedDate.value,
+        memberId,
+        regDate: formattedDate.value,
         amount: amount.value,
-        category_type: category_type.value,
-        category_Id: selectedCategory.category_id,
-        record_memo: record_memo.value,
-        record_details: record_details.value,
+        categoryType: categoryType.value,
+        categoryIdx: selectedCategory.categoryIdx,
+        recordMemo: recordMemo.value,
+        recordDetails: recordDetails.value,
     });
 
     console.log("Sending request with params:", params.toString());

@@ -8,7 +8,6 @@
     <table class="expense-table">
       <thead>
         <tr>
-          <th class="hidden">인덱스</th>
           <th>날짜</th>
           <th>카테고리</th>
           <th>금액</th>
@@ -18,7 +17,6 @@
       </thead>
       <tbody>
         <tr v-for="record in records" :key="record.recordIdx">
-          <td class="hidden">{{ record.recordIdx }}</td>
           <td>{{ formatDate(record.regDate) }}</td>
           <td>{{ record.categoryName }}</td>
           <td :class="amountClass(record.categoryType)">{{ formatAmount(record.amount, record.categoryType) }}</td>
