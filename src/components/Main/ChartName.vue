@@ -1,17 +1,20 @@
 <template>
-    <div id="app2">
-      <h1>카테고리별 소비 기록</h1>
-      <div class="year-select-container">
-        <label for="year-select">년도 선택: </label>
-        <select id="year-select" v-model="selectedYear" @change="fetchData">
-          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-        </select>
-      </div>
-      <div class="chart-container">
-        <canvas id="expenseChart"></canvas>
-      </div>
-    </div>
-  </template>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <h1 class="title"> 카테고리별 소비 기록 </h1>
+
+  <!-- 연도 선택 -->
+  <div class="year-selection">
+    <button @click="decrementYear"><span class="material-symbols-rounded icon">arrow_back_ios</span></button>
+    <span>{{ selectedYear }}</span>
+    <button @click="incrementYear"><span class="material-symbols-rounded icon">arrow_forward_ios</span></button>
+  </div>
+
+  <!-- 차트 -->
+  <div class="chart-container">
+    <canvas id="expenseChart2"></canvas>
+  </div>
+</template>
   
   <script>
   import axios from 'axios';
@@ -20,8 +23,9 @@
   export default {
     data() {
       return {
-        selectedYear: null,
+        selectedYear: new Date().getFullYear(),
         years: [],
+        availableYears: [],
         expenses: [],
         chartInstance: null // Chart 인스턴스를 저장하기 위한 변수
       };
@@ -44,9 +48,10 @@
         try {
           const response = await axios.get(`/api/record/year?${params.toString()}`);
           console.log('Category response data:', response.data);
-          this.years = response.data.haveYears.map(record => record.year); // 응답에서 haveYears 배열 사용
+          this.years = response.data.haveYears;
+          this.availableYears = this.years.map(yearObj => parseInt(yearObj.year, 10)); // 응답에서 haveYears 배열 사용
           if (this.years.length > 0) {
-            this.selectedYear = this.years[0];
+            this.selectedYear = this.availableYears[0];
             this.fetchData();
           }
         } catch (error) {
@@ -78,8 +83,28 @@
           console.error('Error fetching data:', error);
         }
       },
+      incrementYear() {
+      const nextYear = parseInt(this.selectedYear, 10) + 1;
+      // console.log('Trying to increment to year:', nextYear);
+      if (this.availableYears.includes(nextYear)) {
+        this.selectedYear = nextYear;
+        this.fetchData();
+      } else {
+        // console.log('Year not available:', nextYear);
+      }
+    },
+    decrementYear() {
+      const prevYear = parseInt(this.selectedYear, 10) - 1;
+      // console.log('Trying to decrement to year:', prevYear);
+      if (this.availableYears.includes(prevYear)) {
+        this.selectedYear = prevYear;
+        this.fetchData();
+      } else {
+        // console.log('Year not available:', prevYear);
+      }
+    },
       updateChart() {
-        const ctx = document.getElementById('expenseChart').getContext('2d');
+        const ctx = document.getElementById('expenseChart2').getContext('2d');
         if (this.chartInstance) {
           this.chartInstance.destroy(); // 기존 차트가 있으면 파괴
         }
@@ -103,14 +128,15 @@
             ],
           },
           options: {
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 1.5,
             plugins: {
               legend: {
-                position: 'bottom',
+                position: 'right',
+                labels:{
+                  padding: 15
+                }
               }
             }
           },
@@ -123,63 +149,65 @@
   };
   </script>
   
-  <style>
-  #app2 {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    text-align: center;
-    color: #2c3e50;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 1000px;
-    margin: 20px auto;
-  }
-  
-  .year-select-container {
-    margin: 20px;
-  }
-  
-  .chart-container {
-    width: 80%;
-    margin: 0 auto 20px auto;
-  }
-  
+<style scoped>
+.title {
+  font-size: 20px;
+  font-weight: 800;
+  text-align: left;
+  width: fit-content;
 
-  
-  .list-column {
-    width: 48%;
-  }
-  
-  .expense-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .expense-item span {
-    flex: 1;
-    text-align: center;
-  }
-  
-  .expense-item .month {
-    font-weight: bold;
-    color: #ff9f40;
-  }
-  
-  .expense-item .amount {
-    font-weight: bold;
-  }
-  
-  .up {
-    color: red;
-  }
-  
-  .down {
-    color: blue;
-  }
-  </style>
+  background: linear-gradient(transparent 30%, #ffcb7c 30%);
+  display: inline-block;
+
+  margin-bottom: 20px;
+  /* border: 1px solid blue; */
+}
+
+.year-selection {
+  display: flex;
+  justify-content: center;
+  margin:10px auto 30px auto;
+}
+
+.year-selection button {
+  background-color: white;
+  border: none;
+}
+
+button .icon {
+  color:#ffaa29;
+  font-size: 14px;
+  font-size: 14px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+button .icon:hover {
+  color:#ffffff;
+  font-size: 14px;
+  background-color: #ffaa29;
+  padding: 5px;
+  border-radius: 100px;
+}
+
+.year-selection > span {
+  color:#ffaa29;
+  font-size: 17px;
+  font-weight: 500;
+  text-align: center;
+
+  background-color: #fdf1df;
+  border-radius: 100px;
+
+  margin: 0px 10px;
+
+  width: 100px;
+}
+
+.chart-container {
+  width: 100%;
+  height: auto;
+  margin: 20px auto;
+  /* border: 1px solid red; */
+}
+</style>
