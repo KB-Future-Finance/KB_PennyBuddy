@@ -2,17 +2,15 @@
     <div class="chat">
         <img src="@/assets/logo.png" class="logo">
         <div class="resultChat">
-            <ChatBox></ChatBox>
+            <ChatBox :message="message"></ChatBox>
         </div>
         <canvas ref="canvas" class="idle"></canvas>
-        <!-- 테스트코드 -->
         <button type="button" @click="changeTexture" class="color_button">색상 바꾸기</button>
         <div class="input">
-            <InputChat></InputChat>
+            <InputChat @send-message="handleSendMessage" @receive-message="handleReceiveMessage"></InputChat>
         </div>
     </div>
 </template>
-
 <style scoped>
 .input {
     position: fixed;
@@ -51,15 +49,15 @@ canvas {
     /* border: 1px solid red; */
 }
 
-.color_button{
+.color_button {
     font-family: "Pretendard Variable";
     font-size: 15px;
     font-weight: 500;
     color: ffb41d;
 
-    margin-top:10px;
-    margin-bottom:-10px;
-    padding:10px;
+    margin-top: 10px;
+    margin-bottom: -10px;
+    padding: 10px;
 
     background-color: white;
     border-radius: 10px;
@@ -73,6 +71,17 @@ import { ref, onMounted, nextTick, onUnmounted } from 'vue';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+// 메시지 데이터와 메시지 전송 핸들러 추가
+const message = ref(null);
+
+const handleSendMessage = (message) => {
+    // 사용자가 보낸 메시지는 처리시 사용.
+};
+
+const handleReceiveMessage = (receivedMessage) => {
+    message.value = { ...receivedMessage, id: Date.now() };
+};
 
 const canvas = ref(null);
 let mixer, renderer, camera, scene, controls;
@@ -158,7 +167,7 @@ const changeTextureColor = (texture, targetColor) => {
     // 텍스처 업데이트
     texture.image = canvas;
     texture.needsUpdate = true;
-    
+
     return randomColor; // 반환된 랜덤 색상
 };
 
