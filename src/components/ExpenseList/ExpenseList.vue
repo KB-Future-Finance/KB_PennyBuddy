@@ -54,7 +54,6 @@ import 'v-calendar/dist/style.css';
 import { setupCalendar, DatePicker } from 'v-calendar';
 import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
 import { useRouter } from 'vue-router';
-import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
 export default {
   name: 'ExpenseList',
   components: {

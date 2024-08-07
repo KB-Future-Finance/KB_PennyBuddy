@@ -26,7 +26,7 @@ const router = createRouter({
     {
       path: '/expense-list',
       name: 'expense-list',
-      component: ExpenseList
+      component: () => import('../views/ListView.vue')
     },
     {
       path: '/chartmonth',
