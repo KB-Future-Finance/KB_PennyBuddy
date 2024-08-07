@@ -52,12 +52,15 @@
 import axios from 'axios';
 import 'v-calendar/dist/style.css';
 import { setupCalendar, DatePicker } from 'v-calendar';
+import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
 import { useRouter } from 'vue-router';
 
 export default {
   name: 'ExpenseList',
   components: {
     DatePicker,
+    FilterComponent
+
   },
   data() {
     return {
@@ -292,10 +295,6 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  padding: 20px;
-  background-color: white; /* 전체 페이지 배경을 하얀색으로 설정 */
-}
 
 .filter-section {
   margin-bottom: 20px;

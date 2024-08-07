@@ -1,11 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TitleView from '../views/IntroView.vue'
-import ExpenseList from '../components/ExpenseList/ExpenseList.vue';
 
 import ChartMonth from '@/components/Main/ChartMonth.vue';
 import ChartName from '@/components/Main/ChartName.vue';
 import DetailComponent from '@/components/ExpenseList/DetailComponent.vue'
-import input from '@/components/Input/InputFormComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
