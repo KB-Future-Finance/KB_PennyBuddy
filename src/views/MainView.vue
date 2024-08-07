@@ -6,7 +6,7 @@ import ExpenseList from '@/components/Main/ExpenseList.vue'
 import TotalMoney from '@/components/Main/TotalMoney.vue'
 import MonthlySpend from '@/components/Main/MonthlySpend.vue'
 import InputFormComponent from '@/components/Input/InputFormComponent.vue'
-
+import MonthlyChart from '@/components/Main/ChartMonth.vue'
 
 </script>
 
@@ -27,10 +27,11 @@ import InputFormComponent from '@/components/Input/InputFormComponent.vue'
             </div>
             <div class = "box"><InputFormComponent></InputFormComponent>></div>
             <div class = "box">컴포넌트4</div>
+
+            <div class = "box">컴포넌트5</div>
             <div class = "box">
-                <router-link to="/expense-list" class="nav-link">리스트</router-link>
+                <MonthlyChart></MonthlyChart>
             </div>
-            
             <div class = "box">
                 <ExpenseList></ExpenseList>
             </div>
