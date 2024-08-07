@@ -25,7 +25,7 @@ import MonthlyChart from '@/components/Main/ChartMonth.vue'
             <div class = "box">
                 <MonthlySpend></MonthlySpend>
             </div>
-            <div class = "box"><InputFormComponent></InputFormComponent>></div>
+            <div class = "box">컴포넌트3</div>
             <div class = "box">컴포넌트4</div>
 
             <div class = "box">컴포넌트5</div>
