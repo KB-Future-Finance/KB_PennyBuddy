@@ -1,35 +1,41 @@
 <template>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <div class="container">
+    <!-- 필터 -->
     <div>
       <FilterComponent @filter-applied="applyFilter"></FilterComponent>
     </div>
 
     <!-- 기록 목록 테이블 -->
-    <table class="expense-table">
-      <thead>
-        <tr>
-          <th class="hidden">인덱스</th>
-          <th>날짜</th>
-          <th>카테고리</th>
-          <th>금액</th>
-          <th>제목</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="record in records" :key="record.recordIdx">
-          <td class="hidden">{{ record.recordIdx }}</td>
-          <td>{{ formatDate(record.regDate) }}</td>
-          <td>{{ record.categoryName }}</td>
-          <td :class="amountClass(record.categoryType)">{{ formatAmount(record.amount, record.categoryType) }}</td>
-          <td>{{ record.recordMemo }}</td>
-          <td>
-            <button class="edit-button" @click="getDetail(record.recordIdx)">상세</button>
-            <button class="delete-button" @click="confirmDelete(record.recordIdx)">삭제</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="list">
+      <table class="expense-table">
+        <thead>
+          <tr>
+            <th class="date">날짜</th>
+            <th class="category">카테고리</th>
+            <th class="amount">금액</th>
+            <th class="memo">내역</th>
+            <th class="etc"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="record in records" :key="record.recordIdx">
+            <td class="date">{{ formatDate(record.regDate) }}</td>
+            <td class="category">{{ record.categoryName }}</td>
+            <td class="amount" :class="amountClass(record.categoryType)">{{ formatAmount(record.amount, record.categoryType) }}</td>
+            <td class="memo">{{ record.recordMemo }}</td>
+            <td class="etc">
+              <button class="edit-button" @click="getDetail(record.recordIdx)">
+                <span class="material-symbols-rounded icon">info</span>
+              </button>
+              <button class="delete-button" @click="confirmDelete(record.recordIdx)">
+                <span class="material-symbols-rounded icon">delete</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  </div>
 
     <!-- 수입 지출 체크 -->
     <div class="total-amount">
@@ -65,7 +71,7 @@ export default {
       records: [],
       currentPage: 1,
       totalPages: 1,
-      maxVisiblePages: 3, // 최대 표시할 페이지 수
+      maxVisiblePages: 5, // 최대 표시할 페이지 수
       currentPageGroup: 1,
       dateRange: {
         start: '',
@@ -127,7 +133,7 @@ export default {
         params.append('categories', ''); // 빈 배열을 빈 문자열로 처리
       }
       params.append('page', page);
-      params.append('size', 5); // 화면당 보여주는 개수 
+      params.append('size', 9); // 화면당 보여주는 개수 
       params.append('memberId', 1);
 
       axios.get(`/api/record/list?${params.toString()}`)
@@ -293,55 +299,71 @@ export default {
 </script>
 
 <style scoped>
-
-.filter-section {
-  margin-bottom: 20px;
-}
-
-.filter-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.filter-table td {
-  padding: 10px;
-}
-
-.checkbox-container {
+.container{
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
+  height: 100%;
 }
 
-.checkbox-item {
-  display: flex;
-  align-items: center;
-}
-
-input[type="checkbox"] {
-  margin-right: 5px;
+.list{
+  min-height:65%;
+  overflow:hidden;
 }
 
 .expense-table {
+  min-width:100px;
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
 }
 
 .expense-table th, .expense-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
 }
 
 .expense-table th {
+  padding: 8px;
   background-color: #f2f2f2;
+  font-weight: 600;
+}
+
+.expense-table td{
+  text-overflow: ellipsis;
+  overflow:hidden;
+  white-space: nowrap;
+}
+
+.date{
+  max-width: 15%;
+}
+
+.category{
+  max-width: 15%;
+}
+
+.amount{
+  max-width: 20%;
+}
+
+.memo{
+  max-width: 150px;
+  width:40%;
+}
+
+.etc{
+  max-width: 40px;
+  width:10%;
 }
 
 .total-amount {
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px;
+
+  padding: 10px;
+  
+  font-size: 16px;
 }
 
 .income {
@@ -354,24 +376,39 @@ input[type="checkbox"] {
 }
 
 .edit-button, .delete-button {
-  background-color: #f08d8d;
+  background-color: white;
   border: none;
-  padding: 5px 10px;
+
+  margin: 0px 5px;
+  padding: 5px;
+
+  color: #ffcb7c;
+  border-radius: 100px;
+}
+
+.edit-button:hover, .delete-button:hover {
+  background-color: #ffcb7c;
+  border: none;
+
+  margin: 0px 5px;
+  padding: 5px;
+
   color: white;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-right: 5px;
+  border-radius: 100px;
+}
+
+.etc{
+  text-align: left;
 }
 
 .pagination {
-  margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 5px;
 }
 
 .pagination button.active {
-  background-color: #f08d8d;
+  background-color: #ffcb7c;
   color: white;
 }
 

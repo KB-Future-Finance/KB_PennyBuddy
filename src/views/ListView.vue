@@ -17,6 +17,7 @@ import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
             <div class="box">
                 <ExpenseList></ExpenseList>
             </div>
+            <div class="box ">inputComponent</div>
             
         </div>
     </div>
@@ -53,18 +54,16 @@ import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
 }
 
 .flex-container{
-    flex: 3 1 75%;
     display:flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: start;
     gap: 20px;
 
     flex-wrap: wrap;
 
     height:80%;
-    max-width: 75%;
+    width: 75%;
 
-    /* border:5px solid red;  */
     box-sizing: border-box;
 
     padding-left: 20px;
@@ -75,14 +74,11 @@ import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
 .box{
     flex-grow: 1;
     max-width: 100%;
-    height : 200px;
-    width: 30%;
+    height: 95%;
 
     background-color : white;
     
-    margin: 10px 10px;
     padding : 20px;
-    box-sizing: border-box;
 
     border-radius : 15px;
     box-shadow: 5px 5px 10px rgb(221, 215, 202);
@@ -92,11 +88,6 @@ import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
     font-weight: 700;
     text-align:center;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-
     /* border:1px solid red; */
 }
 
@@ -105,6 +96,10 @@ import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
     /* border: 5px solid yellow; */
     height : 90vh;
     min-width: 300px;
+}
+
+.hidden{
+    display: none;
 }
 
 @media(max-width: 1050px){
