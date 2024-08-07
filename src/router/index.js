@@ -5,7 +5,6 @@ import ChartMonth from '@/components/Main/ChartMonth.vue';
 import ChartName from '@/components/Main/ChartName.vue';
 import DetailComponent from '@/components/ExpenseList/DetailComponent.vue'
 import InputFormComponent from '@/components/Input/InputFormComponent.vue';
-import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -58,7 +57,7 @@ const router = createRouter({
     {
       path: '/expense-list',
       name: 'expense-list',
-      component: ExpenseList
+      component: () => import('../views/ListView.vue')
     }
 
     
