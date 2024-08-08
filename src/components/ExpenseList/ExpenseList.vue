@@ -39,8 +39,13 @@
 
     <!-- 수입 지출 체크 -->
     <div class="total-amount">
-      <span class="income">총 수입: {{ formatAmount(totalIncome, '1') }}</span>
-      <span class="expense">총 지출: {{ formatAmount(totalExpense, '2') }}</span>
+      <div>
+        <button class="addButton" @click="emitClickedAdd">거래 추가하기</button>
+      </div>
+      <div>
+        <span class="income">총 수입: {{ formatAmount(totalIncome, '1') }}</span>
+        <span class="expense">총 지출: {{ formatAmount(totalExpense, '2') }}</span>
+      </div>
     </div>
 
     <!-- 페이지네이션 -->
@@ -293,6 +298,10 @@ export default {
       const memberId = 1; // 실제 사용 시, 현재 로그인된 사용자의 ID로 변경
       console.log("Record ID:", recordIdx);
       this.$router.push({ name: 'Detail', params: { recordIdx ,memberId} });
+    },
+    emitClickedAdd(){
+      console.log("clickedAdd");
+      this.$emit('clickedAdd');
     }
   }
 };
@@ -359,7 +368,7 @@ export default {
 
 .total-amount {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 
   padding: 3px;
   
@@ -425,4 +434,11 @@ button:hover {
   background-color: #e0e0e0;
 }
 
+.addButton{
+  background-color: #ffe1b5;
+  font-weight: 500;
+  font-family: "Pretendard Variable";
+  font-size:14px;
+  padding: 10px;
+}
 </style>
