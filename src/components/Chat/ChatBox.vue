@@ -1,8 +1,16 @@
 <template>
-    <div class="speech-bubble" v-if="message">
-        <h1>키키(KIKI)</h1>
-        <div class="message">
-            <span :class="message.role">{{ message.content }}</span>
+    <div>
+        <div class="speech-bubble" v-if="message">
+            <h1>키키(KIKI)</h1>
+            <div class="message">
+                <span :class="message.role">{{ message.content }}</span>
+            </div>
+        </div>
+        <div class="speech-bubble" v-else>
+            <h1>키키(KIKI)</h1>
+            <div class="message">
+                <span>안녕 나는 너의 AI 금융 매니저 키키야!</span>
+            </div>
         </div>
     </div>
 </template>
@@ -40,7 +48,7 @@ export default defineComponent({
     margin: 0 auto;
 
     background: #ffffff;
-    border-radius: 10px;
+    border-radius: 20px;
 
     width: 90%;
     max-width: none;
@@ -73,8 +81,9 @@ export default defineComponent({
     font-weight: 800;
 }
 
-.speech-bubble p {
+.message span {
     max-height: 130px;
     overflow-y: auto;
+    display: block;
 }
 </style>
