@@ -361,7 +361,7 @@ export default {
   display: flex;
   justify-content: flex-end;
 
-  padding: 10px;
+  padding: 3px;
   
   font-size: 16px;
 }
