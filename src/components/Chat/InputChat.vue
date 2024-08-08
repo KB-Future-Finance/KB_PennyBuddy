@@ -3,7 +3,8 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <div class="input">
     <span class="material-symbols-rounded icon">sms</span>
-    <input v-model="userInput" type="text" @keydown.enter.prevent="sendMessage">
+    <input v-model="userInput" type="text" @keypress.enter="sendMessage">
+    
     <button type="button" @click="sendMessage">
       <span class="material-symbols-rounded icon">arrow_back</span>
     </button>
@@ -12,7 +13,6 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import axios from 'axios';
 
 export default defineComponent({
   name: 'InputChat',
@@ -25,10 +25,29 @@ export default defineComponent({
         emit('send-message', message);
 
         try {
-          const response = await axios.post('http://localhost:5000/analyze-and-execute/', {
-            question: message
+          const response = await fetch('http://localhost:5000/analyze-and-execute/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              question: message
+            })
           });
-          emit('receive-message', { role: 'bot', content: response.data.response });
+            
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let partialMessage = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              break;
+            }
+            const decodedValue = decoder.decode(value, { stream: true });
+            partialMessage += decodedValue;
+            emit('receive-message', { role: 'bot', content: partialMessage });
+          }
         } catch (error) {
           console.error('Error sending message:', error);
           emit('receive-message', { role: 'bot', content: 'Error occurred while processing your message.' });
