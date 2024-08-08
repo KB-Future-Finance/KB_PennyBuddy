@@ -1,10 +1,3 @@
-<script setup>
-import MenuBar from '@/components/common/MenuBarComponent.vue'
-import ChatBot from '@/components/Chat/ChatbotComponent.vue'
-import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
-import InputForm from '@/components/Input/InputFormComponent.vue'
-</script>
-
 <template>
     <div class="menu">
         <MenuBar></MenuBar>
@@ -126,16 +119,19 @@ import InputForm from '@/components/Input/InputFormComponent.vue'
 }
 </style>
 
-<script>
-import {ref} from 'vue';
+<script setup>
+import MenuBar from '@/components/common/MenuBarComponent.vue'
+import ChatBot from '@/components/Chat/ChatbotComponent.vue'
+import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
+import InputForm from '@/components/Input/InputFormComponent.vue'
 
-//inputComponent 가시 설정
-const isHidden = ref(true);
-const addHiddenClass = () => {
-    console.log("Received clickedAdd");
-    isHidden.value = true;
-}
-const removeHiddenClass = () => {
-    isHidden.value = false;
-}
+import{ref, onMounted} from 'vue';
+import { useInputStore } from '@/stores/inputStore';
+
+const store = useInputStore();
+const isHidden = ref(store.isHidden);
+
+onMounted(()=>{
+    isHidden.value = store.isHidden;
+});
 </script>
