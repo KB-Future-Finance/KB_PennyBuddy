@@ -2,7 +2,15 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     
     <div class="container">
-        <h1 class="title"> 소비 기록하기 </h1>
+        <div class="titleRow">
+            <button type="button" @click="clickedBack">
+                <span class="material-symbols-rounded titleicon">arrow_back</span>
+            </button>
+            <h1 class="title"> 소비 기록하기 </h1>
+            <button type="button" @click="clickedCamera">
+                <span class="material-symbols-rounded titleicon camera">photo_camera</span>
+            </button>
+        </div>
 
         <form @submit.prevent="handleSubmit">
             <div class="date">
@@ -67,6 +75,10 @@
                 <button type="submit" class="button">확인</button>
             </div>
         </form>
+        
+        <Backdrop v-if="showBackdrop" @close="closeBackdrop">
+            <FileUpload @close="closeBackdrop" />
+        </Backdrop>
     </div>
 </template>
 
@@ -79,6 +91,33 @@
     justify-content: start;
     align-items: center;
 }
+
+.titleRow{
+    width: 100%;
+    display:flex;
+    justify-content: space-between;
+}
+
+.titleRow>button{
+    width:10%;
+    border: none;
+    background-color: white;
+}
+
+.titleicon{
+    background-color: white;
+    padding:7px;
+    border-radius: 100px;
+
+}
+
+.titleicon:hover{
+    /* color: white; */
+    background-color: #ffeabf;
+    padding:7px;
+    border-radius: 100px;
+}
+
 
 .title {
     font-size: 20px;
@@ -123,6 +162,10 @@ form::-webkit-scrollbar-thumb:hover {
     vertical-align: middle;
 }
 
+h2{
+    text-align:left;
+}
+
 .subTitle {
     vertical-align: middle;
     font-size: 18px;
@@ -150,6 +193,10 @@ form::-webkit-scrollbar-thumb:hover {
     font-family: "Pretendard Variable";
     font-size: 15px;
     font-weight: 500;
+}
+
+.class-input{
+    text-align: left;
 }
 
 label {
@@ -364,6 +411,8 @@ label {
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import Backdrop from '@/components/Input/Backdrop.vue';
+import FileUpload from '@/components/Input/FileUpload.vue';
 
 const regDate = ref(new Date());
 const masks = { input: 'YYYY-MM-DD' };
@@ -375,6 +424,7 @@ const isDropdownOpen = ref(false);
 const recordMemo = ref('');
 const recordDetails = ref('');
 const memberId = '1';
+const showBackdrop = ref(false);
 
 const router = useRouter();
 
@@ -508,5 +558,19 @@ const handleSubmit = async () => {
         console.error("Failed to save record", error);
         alert("기록 저장에 실패하였습니다.");
     }
+};
+
+const emit = defineEmits(['clickedBack']);
+const clickedBack = () => {
+    console.log("clicked Back Button");
+    emit('clickedBack');
+};
+
+const clickedCamera = () => {
+    showBackdrop.value = true;
+};
+
+const closeBackdrop = () => {
+    showBackdrop.value = false;
 };
 </script>

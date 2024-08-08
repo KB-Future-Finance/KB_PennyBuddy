@@ -2,7 +2,7 @@
 import MenuBar from '@/components/common/MenuBarComponent.vue'
 import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
-
+import InputForm from '@/components/Input/InputFormComponent.vue'
 </script>
 
 <template>
@@ -15,16 +15,17 @@ import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
         </div>
         <div class = "flex-container">
             <div class="box">
-                <ExpenseList></ExpenseList>
+                <ExpenseList  @clickedAdd="removeHiddenClass"></ExpenseList>
             </div>
-            <div class="box ">inputComponent</div>
+            <div class="box" :class="{hidden:isHidden}">
+                <InputForm @clickedBack="addHiddenClass"></InputForm>
+            </div>
             
         </div>
     </div>
 </template>
 
 <style scoped>
-
 .menu{
     position:fixed;
     top:20px;
@@ -124,3 +125,17 @@ import ExpenseList from '@/components/ExpenseList/ExpenseList.vue';
     
 }
 </style>
+
+<script>
+import {ref} from 'vue';
+
+//inputComponent 가시 설정
+const isHidden = ref(true);
+const addHiddenClass = () => {
+    console.log("Received clickedAdd");
+    isHidden.value = true;
+}
+const removeHiddenClass = () => {
+    isHidden.value = false;
+}
+</script>
