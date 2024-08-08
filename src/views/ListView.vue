@@ -8,10 +8,10 @@
         </div>
         <div class = "flex-container">
             <div class="box">
-                <ExpenseList  @clickedAdd="removeHiddenClass"></ExpenseList>
+                <ExpenseList  @clickedAdd="store.showForm"></ExpenseList>
             </div>
-            <div class="box" :class="{hidden:isHidden}">
-                <InputForm @clickedBack="addHiddenClass"></InputForm>
+            <div class="box" :class="{hidden:store.isHidden}">
+                <InputForm @clickedBack="store.hideForm"></InputForm>
             </div>
             
         </div>
