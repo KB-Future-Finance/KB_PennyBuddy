@@ -25,7 +25,7 @@
             <td class="amount" :class="amountClass(record.categoryType)">{{ formatAmount(record.amount, record.categoryType) }}</td>
             <td class="memo">{{ record.recordMemo }}</td>
             <td class="etc">
-              <button class="edit-button" @click="getDetail(record.recordIdx)">
+              <button class="edit-button" @click="showDetail(record)">
                 <span class="material-symbols-rounded icon">info</span>
               </button>
               <button class="delete-button" @click="confirmDelete(record.recordIdx)">
@@ -35,7 +35,7 @@
           </tr>
         </tbody>
       </table>
-  </div>
+    </div>
 
     <!-- 수입 지출 체크 -->
     <div class="total-amount">
@@ -63,20 +63,21 @@
 import axios from 'axios';
 import 'v-calendar/dist/style.css';
 import { setupCalendar, DatePicker } from 'v-calendar';
-import FilterComponent from '@/components/ExpenseList/FilterComponent.vue'
-import { useRouter } from 'vue-router';
+import FilterComponent from '@/components/ExpenseList/FilterComponent.vue';
+
 export default {
   name: 'ExpenseList',
   components: {
     DatePicker,
     FilterComponent
   },
+  emits: ['clickedAdd', 'showDetail', 'reload'], // Add this line to declare the emitted events
   data() {
     return {
       records: [],
       currentPage: 1,
       totalPages: 1,
-      maxVisiblePages: 5, // 최대 표시할 페이지 수
+      maxVisiblePages: 5,
       currentPageGroup: 1,
       dateRange: {
         start: '',
@@ -84,11 +85,11 @@ export default {
       },
       type: '',
       categories: [],
-      allCategories: [],  // 전체 카테고리 배열
-      filteredCategories: [],  // 필터링된 카테고리 배열
-      totalIncome: 0,  // 총 수입
-      totalExpense: 0,  // 총 지출
-      filterData: {} // 필터링 데이터를 상태로 유지
+      allCategories: [],
+      filteredCategories: [],
+      totalIncome: 0,
+      totalExpense: 0,
+      filterData: {}
     };
   },
   watch: {
@@ -110,52 +111,49 @@ export default {
   created() {
     this.fetchRecords();
     this.fetchTotalAmount();
-    this.fetchCategories();  // 카테고리 데이터를 가져옴
+    this.fetchCategories();
   },
   methods: {
     applyFilter(filterData) {
-      this.filterData = filterData; // 필터링 데이터를 상태로 저장
-      this.currentPage = 1; // 필터링 적용 시 첫 페이지로 이동
+      this.filterData = filterData;
+      this.currentPage = 1;
       this.fetchRecords(filterData);
     },
     fetchRecords(filterData = {}) {
-      console.log("Fetch records called with data:", filterData);
       const {
         startDate = this.dateRange.start,
         endDate = this.dateRange.end,
         categoryType = this.categoryType || null,
-        categories = (this.categories && this.categories.length > 0) ? this.categories : null, // 빈 배열 대신 null을 전달
+        categories = (this.categories && this.categories.length > 0) ? this.categories : null,
         page = this.currentPage
       } = filterData;
 
       const params = new URLSearchParams();
-      if (startDate) params.append('startDate', new Date(startDate).toISOString().split('T')[0]); // ISO 형식으로 변환
-      if (endDate) params.append('endDate', new Date(endDate).toISOString().split('T')[0]); // ISO 형식으로 변환
+      if (startDate) params.append('startDate', new Date(startDate).toISOString().split('T')[0]);
+      if (endDate) params.append('endDate', new Date(endDate).toISOString().split('T')[0]);
       if (categoryType) params.append('categoryType', categoryType);
       if (categories) {
-        categories.forEach(category => params.append('categories', category)); // 수정된 부분
+        categories.forEach(category => params.append('categories', category));
       } else {
-        params.append('categories', ''); // 빈 배열을 빈 문자열로 처리
+        params.append('categories', '');
       }
       params.append('page', page);
-      params.append('size', 9); // 화면당 보여주는 개수 
+      params.append('size', 9);
       params.append('memberId', 1);
 
       axios.get(`/api/record/list?${params.toString()}`)
         .then(response => {
-          console.log("API response:", response.data);
           this.records = response.data.records;
           this.totalPages = response.data.totalPages;
           this.currentPage = response.data.currentPage;
-          this.filterCategories();  // 필터링 적용
+          this.filterCategories();
           this.updatePageGroup();
-          this.fetchTotalAmount(filterData); // 필터링된 데이터로 총 수입/지출 금액을 업데이트합니다.
+          this.fetchTotalAmount(filterData);
         })
         .catch(error => {
           console.error(error);
         });
     },
-
     async fetchTotalAmount(filterData = {}) {
       const {
         startDate = this.dateRange.start,
@@ -185,8 +183,8 @@ export default {
     },
     fetchCategories() {
       const params = new URLSearchParams();
-      if (this.dateRange.start) params.append('startDate', new Date(this.dateRange.start).toISOString().split('T')[0]); // ISO 형식으로 변환
-      if (this.dateRange.end) params.append('endDate', new Date(this.dateRange.end).toISOString().split('T')[0]); // ISO 형식으로 변환
+      if (this.dateRange.start) params.append('startDate', new Date(this.dateRange.start).toISOString().split('T')[0]);
+      if (this.dateRange.end) params.append('endDate', new Date(this.dateRange.end).toISOString().split('T')[0]);
       params.append('memberId', 1);
 
       axios.get(`/api/record/category?${params.toString()}`)
@@ -199,14 +197,14 @@ export default {
         });
     },
     filterCategories() {
-      if (this.type === '1') { // 수입
+      if (this.type === '1') {
         this.filteredCategories = this.allCategories.filter(category => category.categoryType === '1');
-      } else if (this.type === '2') { // 지출
+      } else if (this.type === '2') {
         this.filteredCategories = this.allCategories.filter(category => category.categoryType === '2');
-      } else { // 전체
+      } else {
         this.filteredCategories = [];
       }
-      this.categories = []; // 필터링할 때마다 선택된 카테고리 초기화
+      this.categories = [];
     },
     updatePageGroup() {
       this.currentPageGroup = Math.ceil(this.currentPage / this.maxVisiblePages);
@@ -266,7 +264,7 @@ export default {
         this.deleteRecord({ recordIdx: recordIdx, memberId: 1 });
       }
     },
-    deleteRecord(deleteData={}) {
+    deleteRecord(deleteData = {}) {
       const {
         recordIdx,
         memberId
@@ -284,43 +282,44 @@ export default {
       })
       .then(response => {
         console.log('delete success');
-        // 현재 페이지의 데이터가 삭제되었을 때 페이지 이동 처리
         if (this.records.length === 1 && this.currentPage > 1) {
           this.currentPage--;
         }
         this.fetchRecords(this.filterData);
+        this.$emit('reload'); // reload 이벤트 발생
       })
       .catch(error => {
         console.error("Error fetching delete:", error);
       });
     },
-    getDetail(recordIdx) {
-      const memberId = 1; // 실제 사용 시, 현재 로그인된 사용자의 ID로 변경
-      console.log("Record ID:", recordIdx);
-      this.$router.push({ name: 'Detail', params: { recordIdx ,memberId} });
+    showDetail(record) {
+      this.$emit('showDetail', record);
     },
-    emitClickedAdd(){
-      console.log("clickedAdd");
+    emitClickedAdd() {
       this.$emit('clickedAdd');
     }
   }
 };
 </script>
 
+
+
+
+
 <style scoped>
-.container{
+.container {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.list{
-  min-height:65%;
-  overflow:hidden;
+.list {
+  min-height: 65%;
+  overflow: hidden;
 }
 
 .expense-table {
-  min-width:100px;
+  min-width: 100px;
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
@@ -338,40 +337,38 @@ export default {
   font-weight: 600;
 }
 
-.expense-table td{
+.expense-table td {
   text-overflow: ellipsis;
-  overflow:hidden;
+  overflow: hidden;
   white-space: nowrap;
 }
 
-.date{
+.date {
   max-width: 15%;
 }
 
-.category{
+.category {
   max-width: 15%;
 }
 
-.amount{
+.amount {
   max-width: 20%;
 }
 
-.memo{
+.memo {
   max-width: 150px;
-  width:40%;
+  width: 40%;
 }
 
-.etc{
+.etc {
   max-width: 40px;
-  width:10%;
+  width: 10%;
 }
 
 .total-amount {
   display: flex;
   justify-content: space-between;
-
   padding: 3px;
-  
   font-size: 16px;
 }
 
@@ -387,10 +384,8 @@ export default {
 .edit-button, .delete-button {
   background-color: white;
   border: none;
-
   margin: 0px 5px;
   padding: 5px;
-
   color: #ffcb7c;
   border-radius: 100px;
 }
@@ -398,15 +393,13 @@ export default {
 .edit-button:hover, .delete-button:hover {
   background-color: #ffcb7c;
   border: none;
-
   margin: 0px 5px;
   padding: 5px;
-
   color: white;
   border-radius: 100px;
 }
 
-.etc{
+.etc {
   text-align: left;
 }
 
@@ -421,7 +414,6 @@ export default {
   color: white;
 }
 
-/* 추가된 스타일 */
 button {
   background-color: #f8f8f8;
   border: 1px solid #ddd;
@@ -434,11 +426,11 @@ button:hover {
   background-color: #e0e0e0;
 }
 
-.addButton{
+.addButton {
   background-color: #ffe1b5;
   font-weight: 500;
   font-family: "Pretendard Variable";
-  font-size:14px;
+  font-size: 14px;
   padding: 10px;
 }
 </style>

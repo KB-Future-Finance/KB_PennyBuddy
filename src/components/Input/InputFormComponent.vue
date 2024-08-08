@@ -444,7 +444,7 @@ const selectItem = (item) => {
 
 const getButtonText = computed(() => {
     if (!selectedItem.value) return '카테고리를 선택하세요';
-    const category = categories.value.find(category => category.categoryId === selectedItem.value);
+    const category = categories.value.find(category => category.categoryIdx === selectedItem.value);
     return category ? category.categoryName : '카테고리를 선택하세요';
 });
 
