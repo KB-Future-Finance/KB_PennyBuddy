@@ -51,7 +51,14 @@
       </div>
       <div class="amount">
         <h2><span class="material-symbols-rounded icon">paid</span><span class="subTitle"> 금액</span></h2>
-        <input type="text" v-model="amount" @focus="onFocus" @blur="onBlur" placeholder="금액을 입력하세요" class="amount-input" :readonly="isReadOnly">
+        <input type="text" 
+               :value="formattedAmount" 
+               @input="onInput" 
+               @focus="onFocus" 
+               @blur="onBlur" 
+               placeholder="금액을 입력하세요" 
+               class="amount-input" 
+               :readonly="isReadOnly">
       </div>
       <div class="memo">
         <h2><span class="material-symbols-rounded icon">sell</span><span class="subTitle"> 내역</span></h2>
@@ -96,6 +103,34 @@ const showBackdrop = ref(false);
 const formattedDate = computed(() => {
   return regDate.value ? regDate.value.toISOString().split('T')[0] : '';
 });
+
+const formattedAmount = computed({
+    get() {
+        if (!amount.value) return '';
+        return new Intl.NumberFormat('ko-KR').format(amount.value);
+    },
+    set(value) {
+        const numberValue = value.replace(/,/g, '');
+        if (!isNaN(numberValue)) {
+            amount.value = parseInt(numberValue, 10);
+        }
+    }
+});
+
+const onInput = (event) => {
+    const value = event.target.value.replace(/,/g, '');
+    if (!isNaN(value)) {
+        amount.value = value;
+    }
+};
+
+const onFocus = (event) => {
+    event.target.value = amount.value ? amount.value.toString() : '';
+};
+
+const onBlur = (event) => {
+    event.target.value = formattedAmount.value;
+};
 
 watch(() => props.record, (newRecord) => {
   regDate.value = new Date(newRecord.regDate);

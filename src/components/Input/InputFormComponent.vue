@@ -57,8 +57,14 @@
             </div>
 
             <div class="amount">
-                <h2><span class="material-symbols-rounded icon">paid</span><span class="subTitle"> 금액</span></h2>
-                <input type="text" v-model="amount" @focus="onFocus" @blur="onBlur" placeholder="금액을 입력하세요" class="amount-input">
+            <h2><span class="material-symbols-rounded icon">paid</span><span class="subTitle"> 금액</span></h2>
+            <input type="text" 
+           :value="formattedAmount" 
+           @input="onInput" 
+           @focus="onFocus" 
+           @blur="onBlur" 
+           placeholder="금액을 입력하세요" 
+           class="amount-input">
             </div>
 
             <div class="memo">
@@ -469,26 +475,25 @@ onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
 });
 
-const formattedAmount = computed({
-    get() {
-        if (!amount.value) return '';
-        return new Intl.NumberFormat('ko-KR').format(amount.value);
-    },
-    set(value) {
-        const numberValue = value.replace(/,/g, '');
-        if (!isNaN(numberValue)) {
-            amount.value = parseInt(numberValue, 10);
-        }
-    }
+const formattedAmount = computed(() => {
+    return amount.value ? new Intl.NumberFormat('ko-KR').format(amount.value) : '';
 });
 
+const onInput = (event) => {
+    const value = event.target.value.replace(/,/g, '');
+    if (!isNaN(value)) {
+        amount.value = value;
+    }
+};
+
 const onFocus = (event) => {
-    event.target.value = amount.value ? amount.value.toString() : '';
+    event.target.value = amount.value;
 };
 
 const onBlur = (event) => {
     event.target.value = formattedAmount.value;
 };
+
 
 const fetchCategories = async () => {
     try {
@@ -553,14 +558,14 @@ const handleSubmit = async () => {
     try {
         await axios.get(`/api/record/insert?${params.toString()}`);
         alert("기록이 성공적으로 저장되었습니다.");
-        router.push('/expense-list'); // 입력 성공 후 페이지 이동
+        emit('closeForm');  // 폼을 닫는 이벤트 발생
     } catch (error) {
         console.error("Failed to save record", error);
         alert("기록 저장에 실패하였습니다.");
     }
 };
 
-const emit = defineEmits(['clickedBack']);
+const emit = defineEmits(['clickedBack','closeForm']);
 const clickedBack = () => {
     console.log("clicked Back Button");
     emit('clickedBack');

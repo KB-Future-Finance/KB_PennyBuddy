@@ -12,7 +12,9 @@
         </div>
         <div class="box" :class="{ hidden: store.isHidden }">
           <DetailComponent v-if="selectedRecord && showDetailForm" :record="selectedRecord" @clickedBack="store.hideForm" @update="reloadExpenseList"/>
-          <InputForm v-else @clickedBack="store.hideForm"></InputForm>
+          <InputForm v-else 
+             @clickedBack="store.hideForm" 
+             @closeForm="handleCloseForm"/>
         </div>
       </div>
     </div>
@@ -26,35 +28,40 @@
   import DetailComponent from '@/components/ExpenseList/DetailComponent.vue';
   
   import { ref, onMounted } from 'vue';
-  import { useInputStore } from '@/stores/inputStore';
-  
-  const store = useInputStore();
-  const isHidden = ref(store.isHidden);
-  
-  const selectedRecord = ref(null);
-  const showDetailForm = ref(false);
-  const expenseListRef = ref(null);
-  
-  const showDetail = (record) => {
-      selectedRecord.value = record;
-      store.showForm();
-      showDetailForm.value = true;
-  };
-  
-  const showInputForm = () => {
-      showDetailForm.value = false;
-      store.showForm();
-  };
-  
-  const reloadExpenseList = () => {
-      if (expenseListRef.value) {
-          expenseListRef.value.fetchRecords();
-      }
-  };
-  
-  onMounted(() => {
-      isHidden.value = store.isHidden;
-  });
+import { useInputStore } from '@/stores/inputStore';
+
+const store = useInputStore();
+const isHidden = ref(store.isHidden);
+
+const selectedRecord = ref(null);
+const showDetailForm = ref(false);
+const expenseListRef = ref(null);
+
+const showDetail = (record) => {
+    selectedRecord.value = record;
+    store.showForm();
+    showDetailForm.value = true;
+};
+
+const showInputForm = () => {
+    showDetailForm.value = false;
+    store.showForm();
+};
+
+const reloadExpenseList = () => {
+    if (expenseListRef.value) {
+        expenseListRef.value.fetchRecords();
+    }
+};
+
+const handleCloseForm = () => {
+    store.hideForm();
+    reloadExpenseList(); // 리스트 리로드
+};
+
+onMounted(() => {
+    isHidden.value = store.isHidden;
+});
   </script>
   
   <style scoped>
