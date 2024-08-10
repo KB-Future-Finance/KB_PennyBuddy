@@ -13,3 +13,17 @@ export const useInputStore = defineStore('inputStore', {
         }
     }
 });
+
+export const useStyleStore = defineStore('styleStore', {
+    state:()=>({
+        isHidden: true
+    }),
+    actions:{
+        showButton() {
+            this.isHidden = false;
+        },
+        hideButton(){
+            this.isHidden = true;
+        }
+    }
+});
