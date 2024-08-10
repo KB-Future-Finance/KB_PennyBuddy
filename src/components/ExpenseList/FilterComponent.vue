@@ -26,8 +26,8 @@
           <label for="all" class="label"> 전체</label>
         </div>
         <div class="radio">
-          <input type="radio" id="income" value="1" v-model="categoryType" @change="filterCategories" />
-          <label for="income" class="label"> 수입</label>
+          <input type="radio" id="income2" value="1" v-model="categoryType" @change="filterCategories" />
+          <label for="income2" class="label"> 수입</label>
         </div>
         <div class="radio">
           <input type="radio" id="expense" value="2" v-model="categoryType" @change="filterCategories"/>

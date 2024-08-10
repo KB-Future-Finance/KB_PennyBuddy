@@ -59,12 +59,12 @@
             <div class="amount">
             <h2><span class="material-symbols-rounded icon">paid</span><span class="subTitle"> 금액</span></h2>
             <input type="text" 
-           :value="formattedAmount" 
-           @input="onInput" 
-           @focus="onFocus" 
-           @blur="onBlur" 
-           placeholder="금액을 입력하세요" 
-           class="amount-input">
+            :value="formattedAmount" 
+            @input="onInput" 
+            @focus="onFocus" 
+            @blur="onBlur" 
+            placeholder="금액을 입력하세요" 
+            class="amount-input">
             </div>
 
             <div class="memo">
