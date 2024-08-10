@@ -4,11 +4,11 @@
     <!-- 주제 버튼 -->
     <div class="radio">
       <label for="chat" class="radio">
-        <input type="radio" name="topic" id="chat" value="1" checked/>
+        <input type="radio" name="topic" id="chat" value="1" v-model="selectedTopic"/>
         <span class="label"> 대화하기</span>
       </label>
       <label for="viewSpend" class="radio">
-        <input type="radio" name="topic" id="viewSpend" value="2"/>
+        <input type="radio" name="topic" id="viewSpend" value="2" v-model="selectedTopic"/>
         <span class="label"> 거래내역 조회하기 </span>
       </label>
     </div>
@@ -23,7 +23,6 @@
       </button>
     </div>
   </div>
-  
 </template>
 
 <script>
@@ -33,14 +32,20 @@ export default defineComponent({
   name: 'InputChat',
   setup(_, { emit }) {
     const userInput = ref('');
+    const selectedTopic = ref('1'); // 기본값을 '대화하기'로 설정
 
     const sendMessage = async () => {
       if (userInput.value.trim() !== '') {
         const message = userInput.value;
         emit('send-message', message);
 
+        let apiUrl = 'http://localhost:5000/analyze-and-execute/';
+        if (selectedTopic.value === '2') {
+          apiUrl = 'http://127.0.0.1:5000/execute-sql/';
+        }
+
         try {
-          const response = await fetch('http://localhost:5000/analyze-and-execute/', {
+          const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -74,6 +79,7 @@ export default defineComponent({
 
     return {
       userInput,
+      selectedTopic,
       sendMessage
     };
   }

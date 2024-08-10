@@ -83,7 +83,7 @@
         </form>
         
         <Backdrop v-if="showBackdrop" @close="closeBackdrop">
-            <FileUpload @close="closeBackdrop" />
+            <FileUpload @close="closeBackdrop" @ocrDataParsed="populateFormWithOcrData" />
         </Backdrop>
     </div>
 </template>
@@ -441,6 +441,29 @@ const formattedDate = computed(() => {
 const toggleDropdown = (e) => {
     e.stopPropagation();
     isDropdownOpen.value = !isDropdownOpen.value;
+};
+const populateFormWithOcrData = (ocrData) => {
+    // OCR 데이터로 폼 필드 자동 채우기
+    if (ocrData.reg_date) {
+        // 날짜 포맷이 "YYYY/MM/DD HH:MM:SS" 형식이므로, 이를 Date 객체로 변환
+        regDate.value = new Date(ocrData.reg_date.replace(/-/g, '/'));
+    }
+    if (ocrData.amount) {
+        // 금액 필드에 OCR에서 추출된 금액을 채웁니다.
+        amount.value = ocrData.amount.replace(/[^0-9]/g, '');  // 숫자만 남기고 필드에 채움
+    }
+    if (ocrData.record_memo) {
+        // 내역 필드에 OCR에서 추출된 내역을 채웁니다.
+        recordMemo.value = ocrData.record_memo;
+    }
+    if (ocrData.record_details) {
+        // 메모 필드에 OCR에서 추출된 상세 내역을 채웁니다.
+        recordDetails.value = ocrData.record_details;
+    }
+    if (ocrData.category_Id) {
+        // 카테고리 선택을 위한 category_Id를 사용하여 selectedItem 설정
+        selectedItem.value = ocrData.category_Id;
+    }
 };
 
 const selectItem = (item) => {
