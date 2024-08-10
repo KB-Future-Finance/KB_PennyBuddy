@@ -19,6 +19,11 @@
         <img v-if="imagePreview" :src="imagePreview" alt="업로드된 이미지" class="image-preview">
         <button v-if="selectedFile" @click="removeImage" class="remove-btn">이미지 제거</button>
         <button @click="submitFile" :disabled="!selectedFile" class="submit-btn">제출</button>
+
+        <div v-if="isLoading" class="loading-overlay">
+            <div class="spinner"></div>
+            <p>분석 중...</p>
+        </div>
     </div>
 </template>
 
@@ -30,6 +35,7 @@ import { defineEmits } from 'vue';
 const emit = defineEmits(['close', 'ocrDataParsed']);
 const selectedFile = ref(null);
 const imagePreview = ref(null);
+const isLoading = ref(false); // 로딩 상태 추가
 
 const close = () => {
     emit('close');
@@ -86,6 +92,8 @@ const submitFile = async () => {
     const formData = new FormData();
     formData.append('file', selectedFile.value);
 
+    isLoading.value = true; // 로딩 시작
+
     try {
         const response = await axios.post('http://127.0.0.1:5000/parse-ocr/', formData, {
             headers: {
@@ -103,6 +111,8 @@ const submitFile = async () => {
     } catch (error) {
         console.error("Failed to parse OCR:", error);
         alert("OCR 분석에 실패했습니다.");
+    } finally {
+        isLoading.value = false; // 로딩 종료
     }
 };
 </script>
@@ -181,5 +191,32 @@ const submitFile = async () => {
 .submit-btn:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #000;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 </style>
