@@ -5,8 +5,8 @@
         <span class="material-symbols-rounded titleicon">arrow_back</span>
       </button>
       <h1 class="title">상세 화면</h1>
-      <button type="button" @click="clickedCamera" v-if="isEditing">
-        <span class="material-symbols-rounded titleicon camera">photo_camera</span>
+      <button type="button" @click="clickedCamera" :class="{camera:!isEditing}">
+        <span class="material-symbols-rounded titleicon">photo_camera</span>
       </button>
     </div>
     <form @submit.prevent="handleSubmit">
@@ -52,13 +52,13 @@
       <div class="amount">
         <h2><span class="material-symbols-rounded icon">paid</span><span class="subTitle"> 금액</span></h2>
         <input type="text" 
-               :value="formattedAmount" 
-               @input="onInput" 
-               @focus="onFocus" 
-               @blur="onBlur" 
-               placeholder="금액을 입력하세요" 
-               class="amount-input" 
-               :readonly="isReadOnly">
+              :value="formattedAmount" 
+              @input="onInput" 
+              @focus="onFocus" 
+              @blur="onBlur" 
+              placeholder="금액을 입력하세요" 
+              class="amount-input" 
+              :readonly="isReadOnly">
       </div>
       <div class="memo">
         <h2><span class="material-symbols-rounded icon">sell</span><span class="subTitle"> 내역</span></h2>
@@ -284,6 +284,7 @@ onMounted(fetchCategories);
 
 .titleRow>button{
     width:10%;
+    text-align: left;
     border: none;
     background-color: white;
 }
@@ -302,6 +303,10 @@ onMounted(fetchCategories);
   background: linear-gradient(transparent 30%, #ffcb7c 30%);
   display: inline-block;
   margin: 10px;
+}
+
+.camera{
+  visibility: hidden;
 }
 
 form {
@@ -339,6 +344,10 @@ form::-webkit-scrollbar-thumb:hover {
   vertical-align: middle;
 }
 
+h2{
+  text-align: left;
+}
+
 .subTitle {
   vertical-align: middle;
   font-size: 18px;
@@ -366,6 +375,10 @@ form::-webkit-scrollbar-thumb:hover {
   font-family: "Pretendard Variable";
   font-size: 15px;
   font-weight: 500;
+}
+
+.class-input{
+  text-align: left;
 }
 
 label {
