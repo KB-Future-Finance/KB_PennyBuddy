@@ -1,17 +1,15 @@
 <template>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
     <div class="file-upload">
         <button @click="close" class="close-btn">
             <span class="material-symbols-rounded titleicon">close</span>
         </button>
         <h2>파일을 드래그 앤 드롭하세요</h2>
-        <div class="drop-area">
-            <input type="file" @change="handleFileChange" class="chooseFile">
+        <div id="drop-area" @dragover.prevent @dragleave="resetDropArea" @drop="handleDrop" @click="triggerFileInput">
+            <p>이미지를 드래그 앤 드롭 하거나 클릭하여 업로드하세요.</p>
+            <input type="file" id="file-input" ref="fileInput" @change="handleFileChange" accept="image/*" style="display: none;">
         </div>
-        <button @click="submitFile" :disabled="!selectedFile" class="submit-btn">
-            제출
-        </button>
+        <img v-if="imagePreview" :src="imagePreview" alt="업로드된 이미지" class="image-preview">
+        <button @click="submitFile" :disabled="!selectedFile" class="submit-btn">제출</button>
     </div>
 </template>
 
@@ -22,16 +20,46 @@ import { defineEmits } from 'vue';
 
 const emit = defineEmits(['close', 'ocrDataParsed']);
 const selectedFile = ref(null);
+const imagePreview = ref(null);
 
 const close = () => {
     emit('close');
 };
 
-const handleFileChange = (event) => {
-    const files = event.target.files;
-    if (files.length > 0) {
-        selectedFile.value = files[0];
+const resetDropArea = (e) => {
+    const dropArea = e.currentTarget;
+    dropArea.style.backgroundColor = "#fff";
+};
+
+const handleDrop = (e) => {
+    e.preventDefault();
+    resetDropArea(e);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image")) {
+        displayImage(file);
+        selectedFile.value = file;
     }
+};
+
+const triggerFileInput = () => {
+    const fileInput = document.getElementById('file-input');
+    fileInput.click();
+};
+
+const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith("image")) {
+        displayImage(file);
+        selectedFile.value = file;
+    }
+};
+
+const displayImage = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+        imagePreview.value = reader.result;
+    };
+    reader.readAsDataURL(file);
 };
 
 const submitFile = async () => {
@@ -64,7 +92,6 @@ const submitFile = async () => {
 <style scoped>
 .file-upload {
     width: 40%;
-    height: 40%;
     background: white;
     padding: 20px;
     border-radius: 10px;
@@ -84,13 +111,26 @@ const submitFile = async () => {
     cursor: pointer;
 }
 
-.drop-area {
+#drop-area {
+    border: 2px dashed #ccc;
     width: 100%;
-    height: 80%;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
+    height: 200px;
+    text-align: center;
+    padding: 10px;
+    margin: 10px auto;
+    transition: background-color 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+#drop-area:hover {
+    background-color: #eee;
+}
+
+.image-preview {
+    margin: 10px auto;
+    max-width: 100%;
+    max-height: 200px;
+    display: block;
 }
 
 .submit-btn {
