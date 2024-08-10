@@ -5,13 +5,16 @@
             <ChatBox :message="message"></ChatBox>
         </div>
         <canvas ref="canvas" class="idle"></canvas>
-        <button type="button" @click="changeTexture" class="color_button">색상 바꾸기</button>
+        <button type="button" @click="changeTexture" class="color_button" :class="{hidden:store.isHidden}">색상 바꾸기</button>
         <div class="input">
             <InputChat @send-message="handleSendMessage" @receive-message="handleReceiveMessage"></InputChat>
         </div>
     </div>
 </template>
 <style scoped>
+.hidden{
+    display: none;
+}
 .input {
     position: fixed;
     /* border: 1px solid green; */
@@ -71,6 +74,10 @@ import { ref, onMounted, nextTick, onUnmounted } from 'vue';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { useStyleStore } from '@/stores/inputStore';
+
+//pinia > 버튼 상태 관리
+const store = useStyleStore();
 
 // 메시지 데이터와 메시지 전송 핸들러 추가
 const message = ref(null);

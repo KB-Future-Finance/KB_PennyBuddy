@@ -2,6 +2,19 @@
 import MenuBar from '@/components/common/MenuBarComponent.vue'
 import ChatBot from '@/components/Chat/ChatbotComponent.vue'
 
+import { useStyleStore } from '@/stores/inputStore';
+import { ref, onMounted, onUnmounted } from 'vue';
+
+const store = useStyleStore();
+
+onMounted(()=>{
+    store.isHidden = false;
+});
+
+onUnmounted(()=>{
+    store.isHidden = true;
+})
+
 </script>
 
 <template>
